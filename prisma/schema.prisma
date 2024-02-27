@@ -45,3 +45,17 @@ model UserSubscribe {
   userId      Int     @unique @map("user_id")
   user        User    @relation(fields: [userId], references: [id])
 }
+
+model ProductSeries {
+  id       Int    @id @default(autoincrement())
+  class    Class
+  catagory String @unique
+
+  @@map("product_series")
+}
+
+enum Class {
+  MEGA
+  TYPE
+  ACCESSORY
+}
