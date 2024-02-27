@@ -27,6 +27,8 @@ model User {
   gender          Gender         @default(MALE)
   role            Role
   userSubscribe   UserSubscribe?
+  reword          reword         @relation(fields: [rewordId], references: [id])
+  rewordId        Int
 }
 
 enum Role {
@@ -44,4 +46,10 @@ model UserSubscribe {
   isSubscribe Boolean @default(false)
   userId      Int     @unique @map("user_id")
   user        User    @relation(fields: [userId], references: [id])
+}
+
+model reword {
+  id    Int    @id @default(autoincrement())
+  User  User[]
+  point Int    @default(0)
 }
