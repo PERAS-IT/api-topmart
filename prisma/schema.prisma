@@ -14,18 +14,19 @@ datasource db {
 }
 
 model User {
-  id              String   @id @default(uuid())
-  username        String   @unique
+  id              Int            @id @default(autoincrement())
+  username        String         @unique
   password        String
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  firstName       String   @map("first_name")
-  lastName        String   @map("last_name")
-  phoneNumber     String?  @map("phone_number")
-  profileImageUrl String?  @map("profile_image_url")
-  birthDate       String?  @map("birth_date")
-  gender          Gender   @default(MALE)
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  firstName       String         @map("first_name")
+  lastName        String         @map("last_name")
+  phoneNumber     String?        @map("phone_number")
+  profileImageUrl String?        @map("profile_image_url")
+  birthDate       String?        @map("birth_date")
+  gender          Gender         @default(MALE)
   role            Role
+  userSubscribe   UserSubscribe?
 }
 
 enum Role {
@@ -36,4 +37,11 @@ enum Role {
 enum Gender {
   MALE
   FEMALE
+}
+
+model UserSubscribe {
+  id          Int     @id @default(autoincrement())
+  isSubscribe Boolean @default(false)
+  userId      Int     @unique @map("user_id")
+  user        User    @relation(fields: [userId], references: [id])
 }
