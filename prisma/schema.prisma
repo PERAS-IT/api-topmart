@@ -114,10 +114,10 @@ model ProductSeries {
 }
 
 model ProductClass {
-  id       Int        @id @default(autoincrement())
-  class    Class
-  category String     @unique
-  products Products[]
+  id         Int        @id @default(autoincrement())
+  class      Class
+  categories String     @unique
+  products   Products[]
 
   @@map("product_classes")
 }

@@ -6,6 +6,7 @@ const {
   validateRegister,
   validateLogin,
 } = require("../middlewares/validators/validate-auth");
+const { validateUserId } = require("../middlewares/validators/validate-userId");
 
 const userRoute = express.Router();
 
@@ -15,6 +16,6 @@ userRoute.post("/register", validateRegister, c.user.register);
 userRoute.post("/login", validateLogin, c.user.login);
 userRoute.get("/", authenticate, c.user.getMe);
 // userRoute.put("/:id", c.user.update);
-userRoute.delete("/:id", authenticate, c.user.delete);
+userRoute.delete("/:id", authenticate, validateUserId, c.user.delete);
 
 module.exports = userRoute;
