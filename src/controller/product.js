@@ -2,10 +2,10 @@ const repo = require("../repository");
 
 module.exports.createProductSeries = async (req, res, next) => {
   try {
-    const serie = req.body;
-    console.log(serie);
-    const resultSerie = await repo.product.createProductSeries(serie);
-    res.status(200).json({ resultSerie });
+    const series = req.body;
+    console.log(series);
+    const resultSeries = await repo.product.createProductSeries(series);
+    res.status(200).json({ resultSeries });
   } catch (err) {
     next(err);
   }
