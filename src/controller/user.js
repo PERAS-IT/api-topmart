@@ -25,7 +25,6 @@ const { Role } = require("@prisma/client");
 
 module.exports.login = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { email, password } = req.body;
     // GET username from database
     const user = await repo.user.get({ email });
@@ -60,7 +59,7 @@ module.exports.login = async (req, res, next) => {
 module.exports.register = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    let role = Role.USER;
+    let role = Role.SUPERADMIN;
     const searchUser = await repo.user.getOne(email);
     //Find user by email
     if (searchUser) {
@@ -96,10 +95,8 @@ module.exports.register = async (req, res, next) => {
 // };
 module.exports.delete = async (req, res, next) => {
   try {
-    console.log("first");
-    const { id } = req.userId;
-    console.log(typeof id);
-    await repo.user.delete({ id });
+    console.log(req.userId);
+    await repo.user.delete({ id: req.userId });
     res.status(200);
   } catch (err) {
     next(err);

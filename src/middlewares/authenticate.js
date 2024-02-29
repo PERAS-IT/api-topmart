@@ -22,6 +22,7 @@ module.exports = async function authenticate(req, res, next) {
       next(
         new CustomError("Your account has been delete", "NotFoundData", 500)
       );
+    delete data.password;
     req.user = data;
     next();
   } catch (err) {
