@@ -3,25 +3,26 @@ const utils = require("../utils");
 const { CustomError } = require("../config/error");
 const { Role } = require("@prisma/client");
 
-module.exports.getAll = async (req, res, next) => {
-  try {
-    const users = await repo.user.getAll();
-    res.status(200).json({ users });
-  } catch (err) {
-    next(err);
-  }
-  return;
-};
-module.exports.get = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const user = await repo.user.get({ id });
-    res.status(200).json({ user });
-  } catch (err) {
-    next(err);
-  }
-  return;
-};
+// module.exports.getAll = async (req, res, next) => {
+//   try {
+//     const users = await repo.user.getAll();
+//     res.status(200).json({ users });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
+// module.exports.get = async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     const user = await repo.user.get({ id });
+//     res.status(200).json({ user });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
+
 module.exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -34,7 +35,7 @@ module.exports.login = async (req, res, next) => {
         400
       );
     if (user.isActive === false)
-      throw new CustomError("user was banned", "BANNED USER", "401");
+      throw new CustomError("user was banned", "FORBIDDEN", "403");
 
     // COMPARE password with database
     const result = await utils.bcrypt.compare(password, user.password);
@@ -49,7 +50,7 @@ module.exports.login = async (req, res, next) => {
     delete user.password;
     // SIGN token from user data
     const token = utils.jwt.sign(user);
-    res.status(200).json({ token });
+    res.status(200).json({ user, token });
   } catch (err) {
     next(err);
   }
@@ -73,31 +74,37 @@ module.exports.register = async (req, res, next) => {
     // SIGN token from user data
     const token = utils.jwt.sign(user);
 
-    res.status(200).json({ token });
+    res.status(201).json({ user, token });
   } catch (err) {
     next(err);
   }
   return;
 };
-module.exports.update = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { firstName, lastName } = req.body;
-    const user = await repo.user.update({ id }, { firstName, lastName });
 
-    res.status(200).json({ user });
-  } catch (err) {
-    next(err);
-  }
-  return;
-};
+// module.exports.update = async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     const { firstName, lastName } = req.body;
+//     const user = await repo.user.update({ id }, { firstName, lastName });
+
+//     res.status(200).json({ user });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
 module.exports.delete = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    await repo.user.delete({ id });
+    console.log(req.userId);
+    await repo.user.delete({ id: req.userId });
     res.status(200);
   } catch (err) {
     next(err);
   }
   return;
+};
+
+module.exports.getMe = async (req, res, next) => {
+  console.log(req.user);
+  res.status(200).json({ user: req.user });
 };
