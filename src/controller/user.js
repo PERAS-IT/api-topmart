@@ -35,7 +35,7 @@ module.exports.login = async (req, res, next) => {
         400
       );
     if (user.isActive === false)
-      throw new CustomError("user was banned", "BANNED USER", "401");
+      throw new CustomError("user was banned", "FORBIDDEN", "403");
 
     // COMPARE password with database
     const result = await utils.bcrypt.compare(password, user.password);
@@ -59,7 +59,7 @@ module.exports.login = async (req, res, next) => {
 module.exports.register = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    let role = Role.SUPERADMIN;
+    let role = Role.USER;
     const searchUser = await repo.user.getOne(email);
     //Find user by email
     if (searchUser) {
