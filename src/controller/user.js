@@ -33,6 +33,8 @@ module.exports.login = async (req, res, next) => {
         "WRONG_INPUT",
         400
       );
+    if (user.isActive === false)
+      throw new CustomError("user was banned", "BANNED USER", "401");
 
     // COMPARE password with database
     const result = await utils.bcrypt.compare(password, user.password);
@@ -57,7 +59,11 @@ module.exports.register = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     let role = Role.USER;
-    if (req.body.role != Role.ADMIN) role = Role.ADMIN;
+    const searchUser = await repo.user.getOne(email);
+    //Find user by email
+    if (searchUser) {
+      throw new CustomError("email has been used", "WRONG_INPUT", 400);
+    }
     // HASHED PASSWORD
     const hashed = await utils.bcrypt.hashed(password);
     // CREATE user to database

@@ -23,6 +23,7 @@ const registerSchema = Joi.object({
       "any.only": "password and confirm password did not match",
     })
     .strip(),
+  role: Joi.forbidden(),
 });
 
 const loginSchema = Joi.object({
