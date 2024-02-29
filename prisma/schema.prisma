@@ -14,42 +14,222 @@ datasource db {
 }
 
 model User {
-  id              Int            @id @default(autoincrement())
-  username        String         @unique
-  password        String
-  createdAt       DateTime       @default(now()) @map("created_at")
-  updatedAt       DateTime       @updatedAt @map("updated_at")
-  firstName       String         @map("first_name")
-  lastName        String         @map("last_name")
-  phoneNumber     String?        @map("phone_number")
-  profileImageUrl String?        @map("profile_image_url")
-  birthDate       String?        @map("birth_date")
-  gender          Gender         @default(MALE)
-  role            Role
-  userSubscribe   UserSubscribe?
-  reword          reword         @relation(fields: [rewordId], references: [id])
-  rewordId        Int
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  password      String
+  role          Role
+  isActive      Boolean        @default(true) @map("is_active")
+  userSubscribe UserSubscribe?
+  userAddresses UserAddress[]
+  reward        Reward?
+  userProfile   UserProfile?
+  senders       LiveChat[]     @relation("sender")
+  receivers     LiveChat[]     @relation("receiver")
+  watchLists    WatchList[]
+  carts         Cart[]
+  transactions  Transaction[]
+
+  @@map("users")
 }
 
 enum Role {
   USER
   ADMIN
+  SUPERADMIN
+}
+
+model UserSubscribe {
+  id          Int     @id @default(autoincrement())
+  isSubscribe Boolean @default(false) @map("is_subscribe")
+  userId      Int     @unique @map("user_id")
+  user        User    @relation(fields: [userId], references: [id])
+
+  @@map("user_subscribes")
+}
+
+model Reward {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
+  point  Int  @default(50)
+
+  @@map("rewards")
+}
+
+model UserAddress {
+  id             Int     @id @default(autoincrement())
+  firstName      String  @map("first_name") @db.VarChar(30)
+  lastName       String  @map("last_name") @db.VarChar(30)
+  phone          String  @db.VarChar(10)
+  cityVillage    String? @map("city_village")
+  apartmentSuite String? @map("apartment_suite")
+  province       String
+  zipCode        String  @map("zip_code") @db.VarChar(10)
+  setDefault     Boolean @default(true) @map("set_default")
+  user           User    @relation(fields: [userId], references: [id])
+  userId         Int     @map("user_id")
+
+  @@map("user_addresses")
+}
+
+model UserProfile {
+  id           Int       @id @default(autoincrement())
+  nickName     String?   @map("nick_name") @db.VarChar(30)
+  profileImage String?   @map("profile_image")
+  phone        String?   @db.VarChar(10)
+  birthDate    DateTime? @map("birth_date") @db.Date
+  gender       Gender?
+  user         User      @relation(fields: [userId], references: [id])
+  userId       Int       @unique @map("user_id")
+
+  @@map("user_profiles")
 }
 
 enum Gender {
   MALE
   FEMALE
+  AFAB
+  AMAB
+  UNSPECIFIED
 }
 
-model UserSubscribe {
-  id          Int     @id @default(autoincrement())
-  isSubscribe Boolean @default(false)
-  userId      Int     @unique @map("user_id")
-  user        User    @relation(fields: [userId], references: [id])
+model LiveChat {
+  id         Int      @id @default(autoincrement())
+  message    String
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  sender     User     @relation(name: "sender", fields: [senderId], references: [id])
+  senderId   Int      @map("sender_id")
+  receive    User     @relation(name: "receiver", fields: [receiverId], references: [id])
+  receiverId Int      @map("receiver_id")
+
+  @@map("live_chats")
 }
 
-model reword {
-  id    Int    @id @default(autoincrement())
-  User  User[]
-  point Int    @default(0)
+model ProductSerie {
+  id       Int       @id @default(autoincrement())
+  serie    String    @unique
+  products Product[]
+
+  @@map("product_series")
+}
+
+model ProductClass {
+  id       Int       @id @default(autoincrement())
+  class    Class
+  categoly String    @unique
+  products Product[]
+
+  @@map("product_classes")
+}
+
+enum Class {
+  MEGA
+  TYPE
+  ACCESSORY
+}
+
+model Product {
+  id            Int             @id @default(autoincrement())
+  serieId       Int             @map("serie_id")
+  productSerie  ProductSerie    @relation(fields: [serieId], references: [id])
+  classId       Int             @map("class_id")
+  productClass  ProductClass    @relation(fields: [classId], references: [id])
+  productName   String          @map("product_name")
+  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamp(0)
+  launchDate    DateTime        @map("launch_date") @db.Date
+  price         Decimal         @db.Decimal(10, 2)
+  stockQuantity Int             @map("stock_quantity")
+  isNew         Boolean         @default(true) @map("is_new")
+  brand         String?
+  size          String?
+  material      String?
+  customDetail  String?         @map("custom_detail")
+  watchList     WatchList[]
+  productImage  ProductImage[]
+  productPoster ProductPoster[]
+  cartItems     CartItem[]
+
+  @@map("products")
+}
+
+model WatchList {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  productId Int      @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  @@map("watch_lists")
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  image     String
+  productId Int     @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("product_images")
+}
+
+model ProductPoster {
+  id        Int     @id @default(autoincrement())
+  poster    String
+  productId Int     @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("product_posters")
+}
+
+model Cart {
+  id          Int          @id @default(autoincrement())
+  userId      Int          @map("user_id")
+  user        User         @relation(fields: [userId], references: [id])
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
+  status      CartStatus
+  cartItems   CartItem[]
+  transaction Transaction?
+
+  @@map("carts")
+}
+
+enum CartStatus {
+  NEW
+  PENDING
+  UNPAID
+  COMPLETE
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  cartId    Int     @map("cart_id")
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  productId Int     @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+
+  @@map("cart_items")
+}
+
+model Transaction {
+  id          Int               @id @default(autoincrement())
+  userId      Int               @map("user_id")
+  user        User              @relation(fields: [userId], references: [id])
+  cartId      Int               @unique @map("cart_id")
+  cart        Cart              @relation(fields: [cartId], references: [id])
+  createAt    DateTime          @default(now()) @map("created_at") @db.Timestamp(0)
+  updateAt    DateTime          @map("updated_at") @db.Timestamp(0)
+  totalAmount Decimal           @map("total_amount") @db.Decimal(10, 2)
+  totalPay    Decimal           @map("total_pay") @db.Decimal(10, 2)
+  discount    Decimal           @db.Decimal(10, 2)
+  status      TransactionStatus
+
+  @@map("transactions")
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETE
+  CANCEL
 }
