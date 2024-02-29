@@ -97,7 +97,8 @@ module.exports.register = async (req, res, next) => {
 module.exports.delete = async (req, res, next) => {
   try {
     console.log("first");
-    const { id } = req.params;
+    const { id } = req.userId;
+    console.log(typeof id);
     await repo.user.delete({ id });
     res.status(200);
   } catch (err) {
