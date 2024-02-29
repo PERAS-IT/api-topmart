@@ -105,19 +105,19 @@ model LiveChat {
   @@map("live_chats")
 }
 
-model ProductSerie {
-  id       Int       @id @default(autoincrement())
-  serie    String    @unique
-  products Product[]
+model ProductSeries {
+  id       Int        @id @default(autoincrement())
+  serie    String     @unique
+  products Products[]
 
   @@map("product_series")
 }
 
 model ProductClass {
-  id       Int       @id @default(autoincrement())
+  id       Int        @id @default(autoincrement())
   class    Class
-  categoly String    @unique
-  products Product[]
+  categoly String     @unique
+  products Products[]
 
   @@map("product_classes")
 }
@@ -128,10 +128,10 @@ enum Class {
   ACCESSORY
 }
 
-model Product {
+model Products {
   id            Int             @id @default(autoincrement())
   serieId       Int             @map("serie_id")
-  productSerie  ProductSerie    @relation(fields: [serieId], references: [id])
+  productSeries ProductSeries   @relation(fields: [serieId], references: [id])
   classId       Int             @map("class_id")
   productClass  ProductClass    @relation(fields: [classId], references: [id])
   productName   String          @map("product_name")
@@ -159,26 +159,26 @@ model WatchList {
   userId    Int      @map("user_id")
   user      User     @relation(fields: [userId], references: [id])
   productId Int      @map("product_id")
-  product   Product  @relation(fields: [productId], references: [id])
+  products  Products @relation(fields: [productId], references: [id])
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
 
   @@map("watch_lists")
 }
 
 model ProductImage {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   image     String
-  productId Int     @map("product_id")
-  product   Product @relation(fields: [productId], references: [id])
+  productId Int      @map("product_id")
+  products  Products @relation(fields: [productId], references: [id])
 
   @@map("product_images")
 }
 
 model ProductPoster {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   poster    String
-  productId Int     @map("product_id")
-  product   Product @relation(fields: [productId], references: [id])
+  productId Int      @map("product_id")
+  products  Products @relation(fields: [productId], references: [id])
 
   @@map("product_posters")
 }
@@ -203,13 +203,13 @@ enum CartStatus {
 }
 
 model CartItem {
-  id        Int     @id @default(autoincrement())
-  cartId    Int     @map("cart_id")
-  cart      Cart    @relation(fields: [cartId], references: [id])
-  productId Int     @map("product_id")
-  product   Product @relation(fields: [productId], references: [id])
+  id        Int      @id @default(autoincrement())
+  cartId    Int      @map("cart_id")
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  productId Int      @map("product_id")
+  products  Products @relation(fields: [productId], references: [id])
   quantity  Int
-  price     Decimal @db.Decimal(10, 2)
+  price     Decimal  @db.Decimal(10, 2)
 
   @@map("cart_items")
 }
