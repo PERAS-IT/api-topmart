@@ -25,7 +25,6 @@ const { Role } = require("@prisma/client");
 
 module.exports.login = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { email, password } = req.body;
     // GET username from database
     const user = await repo.user.get({ email });
@@ -36,7 +35,7 @@ module.exports.login = async (req, res, next) => {
         400
       );
     if (user.isActive === false)
-      throw new CustomError("user was banned", "BANNED USER", "401");
+      throw new CustomError("user was banned", "FORBIDDEN", "403");
 
     // COMPARE password with database
     const result = await utils.bcrypt.compare(password, user.password);
@@ -96,10 +95,8 @@ module.exports.register = async (req, res, next) => {
 // };
 module.exports.delete = async (req, res, next) => {
   try {
-    console.log("first");
-    const { id } = req.userId;
-    console.log(typeof id);
-    await repo.user.delete({ id });
+    console.log(req.userId);
+    await repo.user.delete({ id: req.userId });
     res.status(200);
   } catch (err) {
     next(err);

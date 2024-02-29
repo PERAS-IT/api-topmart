@@ -107,7 +107,7 @@ model LiveChat {
 
 model ProductSeries {
   id       Int        @id @default(autoincrement())
-  serie    String     @unique
+  series   String     @unique
   products Products[]
 
   @@map("product_series")
@@ -129,27 +129,27 @@ enum Class {
 }
 
 model Products {
-  id            Int             @id @default(autoincrement())
-  serieId       Int             @map("serie_id")
-  productSeries ProductSeries   @relation(fields: [serieId], references: [id])
-  classId       Int             @map("class_id")
-  productClass  ProductClass    @relation(fields: [classId], references: [id])
-  productName   String          @map("product_name")
-  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamp(0)
-  launchDate    DateTime        @map("launch_date") @db.Date
-  price         Decimal         @db.Decimal(10, 2)
-  stockQuantity Int             @map("stock_quantity")
-  isNew         Boolean         @default(true) @map("is_new")
-  isHot         Boolean         @default(false) @map("is_hot")
-  isSoldout     Boolean         @default(false) @map("is_soldout")
-  brand         String?
-  size          String?
-  material      String?
-  customDetail  String?         @map("custom_detail")
-  watchList     WatchList[]
-  productImage  ProductImage[]
-  productPoster ProductPoster[]
-  cartItems     CartItem[]
+  id             Int              @id @default(autoincrement())
+  serieId        Int              @map("serie_id")
+  productSeries  ProductSeries    @relation(fields: [serieId], references: [id])
+  classId        Int              @map("class_id")
+  productClass   ProductClass     @relation(fields: [classId], references: [id])
+  productName    String           @map("product_name")
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
+  launchDate     DateTime         @map("launch_date") @db.Date
+  price          Decimal          @db.Decimal(10, 2)
+  stockQuantity  Int              @map("stock_quantity")
+  isNew          Boolean          @default(true) @map("is_new")
+  isHot          Boolean          @default(false) @map("is_hot")
+  isSoldOut      Boolean          @default(false) @map("is_sold_out")
+  brand          String?
+  size           String?
+  material       String?
+  customDetail   String?          @map("custom_detail")
+  watchList      WatchList[]
+  productImages  ProductImages[]
+  productPosters ProductPosters[]
+  cartItems      CartItems[]
 
   @@map("products")
 }
@@ -165,18 +165,18 @@ model WatchList {
   @@map("watch_lists")
 }
 
-model ProductImage {
+model ProductImages {
   id        Int      @id @default(autoincrement())
-  image     String
+  images    String
   productId Int      @map("product_id")
   products  Products @relation(fields: [productId], references: [id])
 
   @@map("product_images")
 }
 
-model ProductPoster {
+model ProductPosters {
   id        Int      @id @default(autoincrement())
-  poster    String
+  posters   String
   productId Int      @map("product_id")
   products  Products @relation(fields: [productId], references: [id])
 
@@ -189,7 +189,7 @@ model Cart {
   user        User         @relation(fields: [userId], references: [id])
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
   status      CartStatus
-  cartItems   CartItem[]
+  cartItems   CartItems[]
   transaction Transaction?
 
   @@map("carts")
@@ -202,7 +202,7 @@ enum CartStatus {
   COMPLETE
 }
 
-model CartItem {
+model CartItems {
   id        Int      @id @default(autoincrement())
   cartId    Int      @map("cart_id")
   cart      Cart     @relation(fields: [cartId], references: [id])
