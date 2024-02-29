@@ -140,6 +140,8 @@ model Product {
   price         Decimal         @db.Decimal(10, 2)
   stockQuantity Int             @map("stock_quantity")
   isNew         Boolean         @default(true) @map("is_new")
+  isHot         Boolean         @default(false) @map("is_hot")
+  isSoldout     Boolean         @default(false) @map("is_soldout")
   brand         String?
   size          String?
   material      String?
@@ -226,6 +228,11 @@ model Transaction {
   status      TransactionStatus
 
   @@map("transactions")
+}
+
+model LandingImage {
+  id    Int    @id @default(autoincrement())
+  image String
 }
 
 enum TransactionStatus {
