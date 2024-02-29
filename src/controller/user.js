@@ -3,27 +3,29 @@ const utils = require("../utils");
 const { CustomError } = require("../config/error");
 const { Role } = require("@prisma/client");
 
-module.exports.getAll = async (req, res, next) => {
-  try {
-    const users = await repo.user.getAll();
-    res.status(200).json({ users });
-  } catch (err) {
-    next(err);
-  }
-  return;
-};
-module.exports.get = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const user = await repo.user.get({ id });
-    res.status(200).json({ user });
-  } catch (err) {
-    next(err);
-  }
-  return;
-};
+// module.exports.getAll = async (req, res, next) => {
+//   try {
+//     const users = await repo.user.getAll();
+//     res.status(200).json({ users });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
+// module.exports.get = async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     const user = await repo.user.get({ id });
+//     res.status(200).json({ user });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
+
 module.exports.login = async (req, res, next) => {
   try {
+    console.log(req.body);
     const { email, password } = req.body;
     // GET username from database
     const user = await repo.user.get({ email });
@@ -49,7 +51,7 @@ module.exports.login = async (req, res, next) => {
     delete user.password;
     // SIGN token from user data
     const token = utils.jwt.sign(user);
-    res.status(200).json({ token });
+    res.status(200).json({ user, token });
   } catch (err) {
     next(err);
   }
@@ -73,26 +75,28 @@ module.exports.register = async (req, res, next) => {
     // SIGN token from user data
     const token = utils.jwt.sign(user);
 
-    res.status(200).json({ token });
+    res.status(201).json({ user, token });
   } catch (err) {
     next(err);
   }
   return;
 };
-module.exports.update = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { firstName, lastName } = req.body;
-    const user = await repo.user.update({ id }, { firstName, lastName });
 
-    res.status(200).json({ user });
-  } catch (err) {
-    next(err);
-  }
-  return;
-};
+// module.exports.update = async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     const { firstName, lastName } = req.body;
+//     const user = await repo.user.update({ id }, { firstName, lastName });
+
+//     res.status(200).json({ user });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
 module.exports.delete = async (req, res, next) => {
   try {
+    console.log("first");
     const { id } = req.params;
     await repo.user.delete({ id });
     res.status(200);
@@ -100,4 +104,9 @@ module.exports.delete = async (req, res, next) => {
     next(err);
   }
   return;
+};
+
+module.exports.getMe = async (req, res, next) => {
+  console.log(req.user);
+  res.status(200).json({ user: req.user });
 };
