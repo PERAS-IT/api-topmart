@@ -22,8 +22,11 @@ module.exports.editProductSeries = async (idSeries, nameSeries) =>
     },
   });
 
-//table class
+//table Group
 
+module.exports.getAllGroup = async () => {
+  return await prisma.productGroup.findMany();
+};
 module.exports.findProductGroupByCategory = async (categories) =>
   await prisma.productClass.findFirst({
     where: {

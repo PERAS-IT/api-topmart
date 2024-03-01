@@ -2,6 +2,19 @@ const { CustomError } = require("../config/error");
 const repo = require("../repository");
 const utils = require("../utils");
 const fs = require("fs/promises");
+
+//GET PRODUCT GROUP
+
+module.exports.getAllGroup = async (req, res, next) => {
+  try {
+    const getAllGroup = await repo.product.getAllGroup();
+    res.status(200).json({ getAllGroup });
+  } catch (err) {
+    console.log(err);
+  }
+  return;
+};
+
 //CREATE PRODUCT SERIES
 module.exports.createProductSeries = async (req, res, next) => {
   try {
@@ -56,22 +69,37 @@ module.exports.createProductGroup = async (req, res, next) => {
 
 //CREATE PRODUCT
 module.exports.createProduct = async (req, res, next) => {
-  // console.log(req.files.imageProduct);
+  console.log(req.files.imageProduct);
   try {
     const productData = req.body;
     console.log(productData);
-    // let data = { productId: product.id };
-    let productImages = [];
-    let posterImages = [];
 
-    // const product = await repo.product.createProduct(productData);
+    const product = await repo.product.createProduct(productData);
+
+    const productPromises = req.files.imageProduct.map(async (image) => {
+      const data = {
+        productId: product.id,
+        imageProduct: await utils.cloudinary(image.path),
+      };
+      return await repo.product.createImageProduct(data);
+    });
+
+    const posterPromises = req.files.imagePoster.map(async (image) => {
+      const data = {
+        productId: product.id,
+        imagePoster: await utils.cloudinary(image.path),
+      };
+      return await repo.product.createImagePoster(data);
+    });
+
+    await Promise.all([...productPromises, ...posterPromises]);
     // for (image of req.files.imageProduct) {
-    //   data.image = await utils.cloudinary(image.path);
+    //   data.imageProduct = await utils.cloudinary(image.path);
     //   const linkProductImage = await repo.product.createImageProduct(data);
     //   productImages.push(linkProductImage);
     // }
     // for (image of req.files.imagePoster) {
-    //   data.image = await utils.cloudinary(image.path);
+    //   data.imagePoster = await utils.cloudinary(image.path);
     //   const linkPosterImage = await repo.product.createImagePoster(date);
     //   posterImages.push(linkPosterImage);
     // }

@@ -1,0 +1,38 @@
+[
+    {
+        "group": "MEGA",
+        "categories": "MEGA 100%"
+    },
+    {
+        "group": "MEGA",
+        "categories": "MEGA 400%"
+    },
+    {
+        "group": "MEGA",
+        "categories": "MEGA 1000%"
+    },
+    {
+        "group": "TYPE",
+        "categories": "Collaborations"
+    },
+    {
+        "group": "TYPE",
+        "categories": "Figure"
+    },
+    {
+        "group": "TYPE",
+        "categories": "Action Figure"
+    },
+    {
+        "group": "ACCESSORY",
+        "categories": "Phone  Accessories"
+    },
+    {
+        "group": "ACCESSORY",
+        "categories": "Plush Toys"
+    },
+    {
+        "group": "ACCESSORY",
+        "categories": "Bags"
+    }
+]

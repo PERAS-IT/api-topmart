@@ -119,7 +119,7 @@ model ProductGroup {
   categories String     @unique
   products   Products[]
 
-  @@map("product_classes")
+  @@map("product_group")
 }
 
 enum Group {
@@ -132,8 +132,8 @@ model Products {
   id             Int              @id @default(autoincrement())
   serieId        Int              @map("serie_id")
   productSeries  ProductSeries    @relation(fields: [serieId], references: [id])
-  classId        Int              @map("class_id")
-  productGroup   ProductGroup     @relation(fields: [classId], references: [id])
+  groupId        Int              @map("group_id")
+  productGroup   ProductGroup     @relation(fields: [groupId], references: [id])
   productName    String           @map("product_name")
   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
   launchDate     DateTime         @map("launch_date") @db.Date

@@ -22,6 +22,7 @@ const uploadMiddleware = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
     cb(null, true);
+    console.log(req.files);
   },
 }).fields([
   {
