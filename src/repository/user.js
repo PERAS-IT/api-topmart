@@ -5,16 +5,22 @@ const prisma = require("../config/prisma");
 // ดู user
 module.exports.get = async (where) => await prisma.user.findUnique({ where });
 // ดู user ทั้งหมด
-module.exports.getAll = async () =>
+module.exports.getAllUserWithUserProfile = async () =>
   await prisma.user.findMany({
     where: { role: Role.USER },
-    select: { email, id, isActive },
+    select: {
+      email: true,
+      id: true,
+      isActive: true,
+      role: true,
+      userProfile: true,
+    },
   });
 // ดู admin ทั้งหมด
 module.exports.getAllAdmin = async () =>
   await prisma.user.findMany({
     where: { role: Role.ADMIN },
-    select: { email, isActive, id },
+    select: { email: true, isActive: true, id: true, role: true },
   });
 // ดู user จาก email
 module.exports.getOne = async (email) =>
@@ -54,6 +60,15 @@ module.exports.editAddress = async (id, data) =>
 // ดู user address ทั้งหมด
 module.exports.getAllUserAddress = async (userId) =>
   await prisma.userAddress.findMany({ where: { userId } });
+// ดูว่า user เคยกด subscribe ไว้มั้ย
+module.exports.getSubscribe = async (userId) =>
+  await prisma.userSubscribe.findFirst({ where: { userId } });
+// สร้าง ตาราง sub
+module.exports.createSub = async (data) =>
+  await prisma.userSubscribe.create({ data });
+// อัพเดท ตาราง sub
+module.exports.updateSub = async (data, userId) =>
+  prisma.userSubscribe.update({ where: { userId }, data });
 // ลบ user
 module.exports.delete = async ({ id }) =>
   await prisma.user.delete({ where: { id } });

@@ -40,7 +40,9 @@ userRoute.patch(
   c.user.editUserAddress
 );
 // see all user Address
-userRoute.get("/address/all", authenticate);
+userRoute.get("/address/all", authenticate, c.user.getAllUserAddress);
+// user subscribe web
+userRoute.patch("/subscribe", authenticate, c.user.subscribeWeb);
 // delete user
 userRoute.delete("/:userId", authenticate, validateUserId, c.user.delete);
 

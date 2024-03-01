@@ -6,6 +6,7 @@ const addressIdSchema = Joi.object({
 });
 
 exports.validateAddressId = (req, res, next) => {
+  console.log("validate addressId");
   const { value, error } = addressIdSchema.validate(req.params);
   if (error) throw new CustomError("invalided userId", "WRONG_INPUT", 400);
 

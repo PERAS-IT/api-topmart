@@ -123,6 +123,7 @@ module.exports.getUserProfile = async (req, res, next) => {
 // CREATE USER ADDRESS
 module.exports.createUserAddress = async (req, res, next) => {
   try {
+    console.log(req.body);
     req.body.userId = req.user.id;
     const userAddress = await repo.user.createUserAddress(req.body);
     res.status(201).json({ userAddress });
@@ -136,10 +137,11 @@ module.exports.deleteUserAddress = async (req, res, next) => {
   try {
     // FIND address by addressId
     const address = await repo.user.getUserAddressById(req.addressId);
+    console.log(address);
     if (!address)
       throw new CustomError("userAddress not found", "WRONG_INPUT", 400);
     // DELETE address
-    await repo.user.deleteUserAddress(id);
+    await repo.user.deleteUserAddress(req.addressId);
     res.status(204).json({});
   } catch (err) {
     next(err);
@@ -150,11 +152,11 @@ module.exports.deleteUserAddress = async (req, res, next) => {
 module.exports.editUserAddress = async (req, res, next) => {
   try {
     // FIND userAddress
-    const address = repo.user.getUserAddressById(req.addressId);
+    const address = await repo.user.getUserAddressById(req.addressId);
     if (!address)
       throw new CustomError("address not found", "WRONG_INPUT", 400);
     // EDIT userAddress
-    const userAddress = repo.user.editAddress(req.addressId, req.data);
+    const userAddress = await repo.user.editAddress(req.addressId, req.body);
     res.status(200).json({ userAddress });
   } catch (err) {
     next(err);
@@ -164,12 +166,31 @@ module.exports.editUserAddress = async (req, res, next) => {
 // SEE ALL USER ADDRESS
 module.exports.getAllUserAddress = async (req, res, next) => {
   try {
-    const allAddress = repo.user.getAllUserAddress(req.user.id);
+    const allAddress = await repo.user.getAllUserAddress(req.user.id);
     res.status(200).json({ allAddress });
   } catch (err) {
     next(err);
   }
   return;
+};
+// USER SUBSCRIBE WEB
+module.exports.subscribeWeb = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const isSubscribe = req.body.isSubscribe;
+    req.body.userId = id;
+    const isSub = await repo.user.getSubscribe(id);
+    if (!isSub && isSubscribe) {
+      await repo.user.createSub(req.body);
+      return res.status(200).json({ message: "subscribe success" });
+    }
+    const data = await repo.user.updateSub(req.body, id);
+    if (data.isSubscribe === true)
+      return res.status(200).json({ message: "subscribe success" });
+    res.status(200).json({ message: "unSubscribe success" });
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports.delete = async (req, res, next) => {
