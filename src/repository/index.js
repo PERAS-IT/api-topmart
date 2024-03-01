@@ -1,4 +1,5 @@
 const repo = {
-    user: require("./user"),
-}
-module.exports = repo
+  user: require("./user"),
+  product: require("./product"),
+};
+module.exports = repo;
