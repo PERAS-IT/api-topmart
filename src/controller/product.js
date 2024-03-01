@@ -3,6 +3,19 @@ const repo = require("../repository");
 const utils = require("../utils");
 const fs = require("fs/promises");
 
+//GET PRODUCT GROUP
+
+module.exports.getAllGroup = async (req, res, next) => {
+  try {
+    const getAllGroup = await repo.product.getAllGroup();
+    res.status(200).json({ getAllGroup });
+  } catch (err) {
+    console.log(err);
+  }
+  return;
+};
+
+//CREATE PRODUCT SERIES
 module.exports.createProductSeries = async (req, res, next) => {
   try {
     const { series } = req.body;
@@ -14,46 +27,81 @@ module.exports.createProductSeries = async (req, res, next) => {
     const resultSeries = await repo.product.createProductSeries(series);
     res.status(200).json({ resultSeries });
   } catch (err) {
+    console.log(err);
     next(err);
   }
   return;
 };
-
-module.exports.createProductGroup = async (req, res, next) => {
+//EDIT PRODUCT SERIES
+module.exports.editProductSeries = async (req, res, next) => {
   try {
-    const { group, categories } = req.body;
-    const searchCategories = await repo.product.findProductGroupByCategory(
-      categories
-    );
-    if (searchCategories) {
-      throw new CustomError("category had been to used", "WRONG_INPUT", 400);
-    }
-    const data = { group, categories };
-    const response = await repo.product.createProductClass(data);
-    res.status(200).json({ response });
+    const id = +req.params.seriesId;
+    const data = req.body;
+
+    const result = await repo.product.editProductSeries(id, data);
+    res.status(201).json({ result });
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
 
+//CREATE PRODUCT GROUP
+module.exports.createProductGroup = async (req, res, next) => {
+  try {
+    const { categories } = req.body;
+    const searchCategories = await repo.product.findProductGroupByCategory(
+      categories
+    );
+
+    if (searchCategories) {
+      throw new CustomError("category had been to used", "WRONG_INPUT", 400);
+    }
+    const data = req.body;
+    console.log(data);
+    const response = await repo.product.createProductClass(data);
+    res.status(200).json({ response });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+//CREATE PRODUCT
 module.exports.createProduct = async (req, res, next) => {
   console.log(req.files.imageProduct);
   try {
     const productData = req.body;
     console.log(productData);
-    // const product = await repo.product.createProduct(productData);
-    // let data = { productId: product.id };
-    let productImages = [];
-    let posterImages = [];
 
+    const product = await repo.product.createProduct(productData);
+
+    const productPromises = req.files.imageProduct.map(async (image) => {
+      const data = {
+        productId: product.id,
+        imageProduct: await utils.cloudinary(image.path),
+      };
+      return await repo.product.createImageProduct(data);
+    });
+
+    const posterPromises = req.files.imagePoster.map(async (image) => {
+      const data = {
+        productId: product.id,
+        imagePoster: await utils.cloudinary(image.path),
+      };
+      return await repo.product.createImagePoster(data);
+    });
+
+    await Promise.all([...productPromises, ...posterPromises]);
     // for (image of req.files.imageProduct) {
-    //   data.image = await utils.cloudinary(image.path);
-    //   const linkImage = await repo.product.createImageProduct(data);
-    //   productImages.push(linkImage);
+    //   data.imageProduct = await utils.cloudinary(image.path);
+    //   const linkProductImage = await repo.product.createImageProduct(data);
+    //   productImages.push(linkProductImage);
     // }
-    // for(image of req.files.imagePoster){
-    //   data.image = await utils.cloudinary(image.path);
-    //   const linkImage = await repo.product.
+    // for (image of req.files.imagePoster) {
+    //   data.imagePoster = await utils.cloudinary(image.path);
+    //   const linkPosterImage = await repo.product.createImagePoster(date);
+    //   posterImages.push(linkPosterImage);
     // }
 
     res.status(201).json({ message: "create success" });
@@ -70,8 +118,19 @@ module.exports.createProduct = async (req, res, next) => {
   }
 };
 
+//GET ALL PRODUCT
 module.exports.getAllProduct = async (req, res, next) => {
   try {
-  } catch (err) {}
+    const resultAllProduct = await repo.product.getAllProduct();
+    res.status(200).json({ resultAllProduct });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 };
+//GET PRODUCT BY PRODUCT SERIES
+module.exports.getProductByIdSeries = async (req, res, next) => {};
+//GET PRODUCT BY GROUP
+module.exports.getProductByIdGroup = async (req, res, next) => {};
+//GET PRODUCT BY ID
 module.exports.getProductById = async (req, res, next) => {};

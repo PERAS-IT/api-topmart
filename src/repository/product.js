@@ -22,8 +22,11 @@ module.exports.editProductSeries = async (idSeries, nameSeries) =>
     },
   });
 
-//table class
+//table Group
 
+module.exports.getAllGroup = async () => {
+  return await prisma.productGroup.findMany();
+};
 module.exports.findProductGroupByCategory = async (categories) =>
   await prisma.productClass.findFirst({
     where: {
@@ -34,7 +37,7 @@ module.exports.findProductGroupByCategory = async (categories) =>
 module.exports.createProductGroup = async (data) =>
   await prisma.productClass.create({ data });
 
-module.exports.editProductClass = async (idGroup, data) => {
+module.exports.editProductGroup = async (idGroup, data) => {
   await prisma.productClass.update({
     where: {
       id: idGroup,
@@ -52,6 +55,16 @@ module.exports.createProductImage = async (data) =>
 
 module.exports.createProductPoster = async (data) =>
   await prisma.productPoster.create({ data });
+
+module.exports.getAllProduct = async () =>
+  await prisma.products.findMany({
+    include: {
+      productSeries,
+      productClass,
+      productImages,
+      productPosters,
+    },
+  });
 
 module.exports.getProductById = async (idProduct) =>
   await prisma.product.findUnique({
