@@ -60,7 +60,7 @@ module.exports.register = async (req, res, next) => {
 // };
 
 module.exports.getAllUser = async (req, res, next) => {
-  const allUser = await repo.user.getAll();
+  const allUser = await repo.user.getAllUserWithUserProfile();
   res.status(200).json({ user: allUser });
 };
 

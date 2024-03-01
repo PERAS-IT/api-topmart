@@ -31,7 +31,8 @@ adminRoute.get(
 adminRoute.get(
   "/allAdmin",
   authenticate,
-  checkPermission(Role.SUPERADMIN, c.admin.getAllAdmin)
+  checkPermission(Role.SUPERADMIN, c.admin.getAllAdmin),
+  c.admin.getAllAdmin
 );
 
 adminRoute.patch(
