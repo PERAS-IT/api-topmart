@@ -2,13 +2,14 @@ const { Router } = require("express");
 
 const c = require("../controller");
 const authenticate = require("../middlewares/authenticate");
-const checkPermission = require("../middlewares/checkPermission");
+const { checkPermission } = require("../middlewares/checkPermission");
 const {
   validateLogin,
   validateRegister,
 } = require("../middlewares/validators/validate-auth");
 const { Role } = require("@prisma/client");
 const { validateUserId } = require("../middlewares/validators/validate-userId");
+const { route } = require("./user");
 
 const adminRoute = Router();
 
@@ -56,3 +57,5 @@ adminRoute.patch(
   validateUserId,
   c.admin.bannedAdmin
 );
+
+module.exports = adminRoute;

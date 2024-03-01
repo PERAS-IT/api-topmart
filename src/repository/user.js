@@ -30,9 +30,31 @@ module.exports.unbannedUser = async (id) =>
   await prisma.user.update({ data: { isActive: true } });
 // สมัคร user
 module.exports.create = async (data) => await prisma.user.create({ data });
+// สร้าง user profile
+module.exports.createUserProfile = async (userId) =>
+  await prisma.userProfile.create({ data: { userId } });
 // อัพเดท user profile
-module.exports.update = async ({ id }, data) =>
-  await prisma.user.update({ where: { id }, data });
+module.exports.editUserProfile = async (userId, data) =>
+  await prisma.userProfile.update({ where: { userId }, data });
+// ดู profile user
+module.exports.getUserProfile = async (userId) =>
+  await prisma.userProfile.findFirst({ where: { userId } });
+// สร้าง user address
+module.exports.createUserAddress = async (data) =>
+  await prisma.userAddress.create({ data });
+// ดู user address ตาม id
+module.exports.getUserAddressById = async (id) =>
+  await prisma.userAddress.findFirst({ where: { id } });
+// ลบ user address
+module.exports.deleteUserAddress = async (id) =>
+  await prisma.userAddress.delete({ where: { id } });
+// แก้ไข user address
+module.exports.editAddress = async (id, data) =>
+  await prisma.userAddress.update({ where: { id }, data });
+// ดู user address ทั้งหมด
+module.exports.getAllUserAddress = async (userId) =>
+  await prisma.userAddress.findMany({ where: { userId } });
+// ลบ user
 module.exports.delete = async ({ id }) =>
   await prisma.user.delete({ where: { id } });
 

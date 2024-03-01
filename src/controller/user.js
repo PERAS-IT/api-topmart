@@ -23,6 +23,7 @@ const { Role } = require("@prisma/client");
 //   return;
 // };
 
+// LOGIN
 module.exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -56,9 +57,11 @@ module.exports.login = async (req, res, next) => {
   }
   return;
 };
+// REGISTER
 module.exports.register = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    console.log(req.body);
     let role = Role.USER;
     const searchUser = await repo.user.getOne(email);
     //Find user by email
@@ -71,6 +74,8 @@ module.exports.register = async (req, res, next) => {
     const user = await repo.user.create({ email, password: hashed, role });
     // DELETE KEY of password from user data
     delete user.password;
+    // CREATE empty userProfile
+    await repo.user.createUserProfile(user.id);
     // SIGN token from user data
     const token = utils.jwt.sign(user);
 
@@ -80,32 +85,93 @@ module.exports.register = async (req, res, next) => {
   }
   return;
 };
-
+// EDIT PROFILE
 module.exports.editProfile = async (req, res, next) => {
   try {
+    // FIND user by id
     const { id } = req.user;
     const user = await repo.user.getOneById(id);
     if (!user) throw new CustomError("user not found", "WRONG_INPUT", 400);
-    const profile = await repo.user.update({ id }, req.body);
-    res.status(200).json({ profile });
+    // EDIT userProfile
+    const userProfile = await repo.user.editUserProfile(id, req.body);
+    res.status(200).json({ userProfile });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// GET ME
+module.exports.getMe = async (req, res, next) => {
+  try {
+    res.status(200).json({ user: req.user });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// SEE USER PROFILE
+module.exports.getUserProfile = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    const userProfile = await repo.user.getUserProfile(id);
+    res.status(200).json({ userProfile });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// CREATE USER ADDRESS
+module.exports.createUserAddress = async (req, res, next) => {
+  try {
+    req.body.userId = req.user.id;
+    const userAddress = await repo.user.createUserAddress(req.body);
+    res.status(201).json({ userAddress });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// DELETE USER ADDRESS
+module.exports.deleteUserAddress = async (req, res, next) => {
+  try {
+    // FIND address by addressId
+    const address = await repo.user.getUserAddressById(req.addressId);
+    if (!address)
+      throw new CustomError("userAddress not found", "WRONG_INPUT", 400);
+    // DELETE address
+    await repo.user.deleteUserAddress(id);
+    res.status(204).json({});
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// UPDATE USER ADDRESS
+module.exports.editUserAddress = async (req, res, next) => {
+  try {
+    // FIND userAddress
+    const address = repo.user.getUserAddressById(req.addressId);
+    if (!address)
+      throw new CustomError("address not found", "WRONG_INPUT", 400);
+    // EDIT userAddress
+    const userAddress = repo.user.editAddress(req.addressId, req.data);
+    res.status(200).json({ userAddress });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// SEE ALL USER ADDRESS
+module.exports.getAllUserAddress = async (req, res, next) => {
+  try {
+    const allAddress = repo.user.getAllUserAddress(req.user.id);
+    res.status(200).json({ allAddress });
   } catch (err) {
     next(err);
   }
   return;
 };
 
-// module.exports.update = async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     const { firstName, lastName } = req.body;
-//     const user = await repo.user.update({ id }, { firstName, lastName });
-
-//     res.status(200).json({ user });
-//   } catch (err) {
-//     next(err);
-//   }
-//   return;
-// };
 module.exports.delete = async (req, res, next) => {
   try {
     console.log(req.userId);
@@ -115,9 +181,4 @@ module.exports.delete = async (req, res, next) => {
     next(err);
   }
   return;
-};
-
-module.exports.getMe = async (req, res, next) => {
-  console.log(req.user);
-  res.status(200).json({ user: req.user });
 };
