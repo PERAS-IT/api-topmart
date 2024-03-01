@@ -73,14 +73,13 @@ model UserAddress {
 }
 
 model UserProfile {
-  id           Int       @id @default(autoincrement())
-  nickName     String?   @map("nick_name") @db.VarChar(30)
-  profileImage String?   @map("profile_image")
-  phone        String?   @db.VarChar(10)
-  birthDate    DateTime? @map("birth_date") @db.Date
-  gender       Gender?
-  user         User      @relation(fields: [userId], references: [id])
-  userId       Int       @unique @map("user_id")
+  id        Int       @id @default(autoincrement())
+  nickName  String?   @map("nick_name") @db.VarChar(30)
+  phone     String?   @db.VarChar(10)
+  birthDate DateTime? @map("birth_date") @db.Date
+  gender    Gender?
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int       @unique @map("user_id")
 
   @@map("user_profiles")
 }

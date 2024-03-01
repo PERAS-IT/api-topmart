@@ -17,9 +17,9 @@ module.exports.getAllUserWithUserProfile = async () =>
     },
   });
 // ดู admin ทั้งหมด
-module.exports.getAllAdminAndUser = async () =>
+module.exports.getAllAdmin = async () =>
   await prisma.user.findMany({
-    where: { OR: [{ role: Role.ADMIN }, { role: Role.USER }] },
+    where: { role: Role.ADMIN },
     select: { email: true, isActive: true, id: true, role: true },
   });
 // ดู user จาก email
@@ -33,7 +33,7 @@ module.exports.bannedUser = async (id) =>
   await prisma.user.update({ data: { isActive: false }, where: { id } });
 // ปลดแบน user
 module.exports.unbannedUser = async (id) =>
-  await prisma.user.update({ data: { isActive: true } });
+  await prisma.user.update({ data: { isActive: true }, where: { id } });
 // สมัคร user
 module.exports.create = async (data) => await prisma.user.create({ data });
 // สร้าง user profile
@@ -70,7 +70,7 @@ module.exports.createSub = async (data) =>
 module.exports.updateSub = async (data, userId) =>
   prisma.userSubscribe.update({ where: { userId }, data });
 // ลบ user
-module.exports.delete = async ({ id }) =>
+module.exports.delete = async (id) =>
   await prisma.user.delete({ where: { id } });
 
 // =========================================== CUSTOM REPOSITORY ===================================

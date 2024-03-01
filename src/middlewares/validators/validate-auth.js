@@ -3,8 +3,8 @@ const validate = require("./validator");
 
 const registerSchema = Joi.object({
   email: Joi.string().required().trim().email({ tlds: false }).message({
-    "string.empty": "invalid email address or mobile number",
-    "any.required": "invalid email address or mobile number",
+    "string.empty": "invalid email address ",
+    "any.required": "invalid email address ",
   }),
   password: Joi.string()
     .required()

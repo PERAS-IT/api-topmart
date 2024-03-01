@@ -19,6 +19,8 @@ module.exports.register = async (req, res, next) => {
     const admin = await repo.user.create({ email, password: hashed, role });
     // Delete password
     delete admin.password;
+    // CREATE empty userProfile
+    await repo.user.createUserProfile(admin.id);
     // Sign token
     const token = utils.jwt.sign(admin);
 
@@ -39,9 +41,9 @@ module.exports.getAllUser = async (req, res, next) => {
   return;
 };
 // GET ALL ADMIN
-module.exports.getAllAdminAndUser = async (req, res, next) => {
+module.exports.getAllAdmin = async (req, res, next) => {
   try {
-    const allAdmin = await repo.user.getAllAdminAndUser();
+    const allAdmin = await repo.user.getAllAdmin();
     res.status(200).json({ user: allAdmin });
   } catch (err) {
     next(err);
@@ -92,21 +94,37 @@ module.exports.unbannedUser = async (req, res, next) => {
   }
   return;
 };
-// BAN ADMIN
-module.exports.bannedAdmin = async (req, res, next) => {
+// BAN ALL USER
+module.exports.bannedBySuperAdmin = async (req, res, next) => {
   try {
     // Find user
-    const admin = await repo.user.getOneById(req.userId);
-    if (!admin) throw new CustomError("admin not found", "WRONG_INPUT", 400);
-    // Check user role
-    if (user.role !== Role.ADMIN)
-      throw new CustomError("forbidden", "FORBIDDEN", 403);
-    // Check admin status
+    const user = await repo.user.getOneById(req.userId);
+    if (!user) throw new CustomError("admin not found", "WRONG_INPUT", 400);
+    // Check user status
     if (user.isActive === false)
       throw new CustomError("user already banned", "WRONG_INPUT", 400);
-    // Ban admin
+    // Ban user
     await repo.user.bannedUser(req.userId);
     user.isActive = false;
+    delete user.password;
+    res.status(200).json({ user });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// UNBAN ALL USER
+module.exports.unbannedBySuperAdmin = async (req, res, next) => {
+  try {
+    // Find user
+    const user = await repo.user.getOneById(req.userId);
+    if (!user) throw new CustomError("user not found", "WRONG_INPUT", 400);
+    // Check user status
+    if (user.isActive === true)
+      throw new CustomError("user already unbanned", "WRONG_INPUT", 400);
+    // Ban user
+    await repo.user.unbannedUser(req.userId);
+    user.isActive = true;
     delete user.password;
     res.status(200).json({ user });
   } catch (err) {

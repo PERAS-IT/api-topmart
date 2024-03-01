@@ -17,43 +17,51 @@ adminRoute.post(
   validateRegister,
   c.admin.register
 );
-// admin see all user
+// admin,superAdmin see all user
 adminRoute.get(
   "/allUser",
   authenticate,
-  checkPermission(Role.ADMIN),
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.admin.getAllUser
 );
 // super admin see all admin
 adminRoute.get(
-  "/all",
+  "/allAdmin",
   authenticate,
   checkPermission(Role.SUPERADMIN),
-  c.admin.getAllAdminAndUser
+  c.admin.getAllAdmin
 );
 // admin ban user
 adminRoute.patch(
   "/:userId/banned/user",
   authenticate,
-  checkPermission(Role.ADMIN),
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   validateUserId,
   c.admin.bannedUser
 );
 // admin unban user
 adminRoute.patch(
-  "/:userId/unbanned/user",
+  "/:userId/unBanned/user",
   authenticate,
-  checkPermission(Role.ADMIN),
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   validateUserId,
   c.admin.unbannedUser
 );
-// superadmin ban admin
+// superadmin ban alluser
 adminRoute.patch(
   "/:userId/banned/admin",
   authenticate,
   checkPermission(Role.SUPERADMIN),
   validateUserId,
-  c.admin.bannedAdmin
+  c.admin.bannedBySuperAdmin
+);
+// superadmin unban alluser
+adminRoute.patch(
+  "/:userId/unBanned",
+  authenticate,
+  checkPermission(Role.SUPERADMIN),
+  validateUserId,
+  c.admin.unbannedBySuperAdmin
 );
 
 module.exports = adminRoute;

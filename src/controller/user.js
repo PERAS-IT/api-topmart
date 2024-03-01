@@ -58,7 +58,6 @@ module.exports.register = async (req, res, next) => {
     await repo.user.createUserProfile(user.id);
     // SIGN token from user data
     const token = utils.jwt.sign(user);
-
     res.status(201).json({ user, token });
   } catch (err) {
     next(err);
@@ -103,7 +102,6 @@ module.exports.getUserProfile = async (req, res, next) => {
 // CREATE USER ADDRESS
 module.exports.createUserAddress = async (req, res, next) => {
   try {
-    console.log(req.body);
     req.body.userId = req.user.id;
     const userAddress = await repo.user.createUserAddress(req.body);
     res.status(201).json({ userAddress });
@@ -177,8 +175,8 @@ module.exports.subscribeWeb = async (req, res, next) => {
 module.exports.delete = async (req, res, next) => {
   try {
     console.log(req.userId);
-    await repo.user.delete({ id: req.userId });
-    res.status(200);
+    await repo.user.delete(req.userId);
+    res.status(200).json({});
   } catch (err) {
     next(err);
   }
