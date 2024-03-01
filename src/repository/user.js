@@ -17,9 +17,9 @@ module.exports.getAllUserWithUserProfile = async () =>
     },
   });
 // ดู admin ทั้งหมด
-module.exports.getAllAdmin = async () =>
+module.exports.getAllAdminAndUser = async () =>
   await prisma.user.findMany({
-    where: { role: Role.ADMIN },
+    where: { OR: [{ role: Role.ADMIN }, { role: Role.USER }] },
     select: { email: true, isActive: true, id: true, role: true },
   });
 // ดู user จาก email
@@ -30,7 +30,7 @@ module.exports.getOneById = async (id) =>
   await prisma.user.findFirst({ where: { id } });
 // แบน user
 module.exports.bannedUser = async (id) =>
-  await prisma.user.update({ data: { isActive: false } });
+  await prisma.user.update({ data: { isActive: false }, where: { id } });
 // ปลดแบน user
 module.exports.unbannedUser = async (id) =>
   await prisma.user.update({ data: { isActive: true } });

@@ -3,16 +3,13 @@ const { Router } = require("express");
 const c = require("../controller");
 const authenticate = require("../middlewares/authenticate");
 const { checkPermission } = require("../middlewares/checkPermission");
-const {
-  validateLogin,
-  validateRegister,
-} = require("../middlewares/validators/validate-auth");
+const { validateRegister } = require("../middlewares/validators/validate-auth");
 const { Role } = require("@prisma/client");
 const { validateUserId } = require("../middlewares/validators/validate-userId");
-const { route } = require("./user");
 
 const adminRoute = Router();
 
+// superadmin create admin
 adminRoute.post(
   "/register",
   authenticate,
@@ -20,21 +17,21 @@ adminRoute.post(
   validateRegister,
   c.admin.register
 );
-
+// admin see all user
 adminRoute.get(
   "/allUser",
   authenticate,
   checkPermission(Role.ADMIN),
   c.admin.getAllUser
 );
-
+// super admin see all admin
 adminRoute.get(
-  "/allAdmin",
+  "/all",
   authenticate,
-  checkPermission(Role.SUPERADMIN, c.admin.getAllAdmin),
-  c.admin.getAllAdmin
+  checkPermission(Role.SUPERADMIN),
+  c.admin.getAllAdminAndUser
 );
-
+// admin ban user
 adminRoute.patch(
   "/:userId/banned/user",
   authenticate,
@@ -42,7 +39,7 @@ adminRoute.patch(
   validateUserId,
   c.admin.bannedUser
 );
-
+// admin unban user
 adminRoute.patch(
   "/:userId/unbanned/user",
   authenticate,
@@ -50,7 +47,7 @@ adminRoute.patch(
   validateUserId,
   c.admin.unbannedUser
 );
-
+// superadmin ban admin
 adminRoute.patch(
   "/:userId/banned/admin",
   authenticate,

@@ -3,26 +3,6 @@ const utils = require("../utils");
 const { CustomError } = require("../config/error");
 const { Role } = require("@prisma/client");
 
-// module.exports.getAll = async (req, res, next) => {
-//   try {
-//     const users = await repo.user.getAll();
-//     res.status(200).json({ users });
-//   } catch (err) {
-//     next(err);
-//   }
-//   return;
-// };
-// module.exports.get = async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     const user = await repo.user.get({ id });
-//     res.status(200).json({ user });
-//   } catch (err) {
-//     next(err);
-//   }
-//   return;
-// };
-
 // LOGIN
 module.exports.login = async (req, res, next) => {
   try {
@@ -191,6 +171,7 @@ module.exports.subscribeWeb = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+  return;
 };
 
 module.exports.delete = async (req, res, next) => {

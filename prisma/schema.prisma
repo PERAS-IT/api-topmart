@@ -150,6 +150,7 @@ model Products {
   productImages  ProductImages[]
   productPosters ProductPosters[]
   cartItems      CartItems[]
+  itemPayments   ItemPayment[]
 
   @@map("products")
 }
@@ -184,22 +185,12 @@ model ProductPosters {
 }
 
 model Cart {
-  id          Int          @id @default(autoincrement())
-  userId      Int          @map("user_id")
-  user        User         @relation(fields: [userId], references: [id])
-  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
-  status      CartStatus
-  cartItems   CartItems[]
-  transaction Transaction?
+  id        Int         @id @default(autoincrement())
+  userId    Int         @map("user_id")
+  user      User        @relation(fields: [userId], references: [id])
+  cartItems CartItems[]
 
   @@map("carts")
-}
-
-enum CartStatus {
-  NEW
-  PENDING
-  UNPAID
-  COMPLETE
 }
 
 model CartItems {
@@ -214,18 +205,36 @@ model CartItems {
   @@map("cart_items")
 }
 
+model ItemPayment {
+  id            Int           @id @default(autoincrement())
+  quantity      Int
+  price         Decimal       @db.Decimal(10, 2)
+  transaction   Transaction   @relation(fields: [transactionId], references: [id])
+  payStatus     PaymentStatus
+  transactionId Int           @map("transaction_id")
+  Products      Products?     @relation(fields: [productsId], references: [id])
+  productsId    Int?          @map("product_id")
+
+  @@map("item_payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETE
+  FAIL
+}
+
 model Transaction {
-  id          Int               @id @default(autoincrement())
-  userId      Int               @map("user_id")
-  user        User              @relation(fields: [userId], references: [id])
-  cartId      Int               @unique @map("cart_id")
-  cart        Cart              @relation(fields: [cartId], references: [id])
-  createAt    DateTime          @default(now()) @map("created_at") @db.Timestamp(0)
-  updateAt    DateTime          @map("updated_at") @db.Timestamp(0)
-  totalAmount Decimal           @map("total_amount") @db.Decimal(10, 2)
-  totalPay    Decimal           @map("total_pay") @db.Decimal(10, 2)
-  discount    Decimal           @db.Decimal(10, 2)
-  status      TransactionStatus
+  id           Int               @id @default(autoincrement())
+  userId       Int               @map("user_id")
+  user         User              @relation(fields: [userId], references: [id])
+  createAt     DateTime          @default(now()) @map("created_at") @db.Timestamp(0)
+  paymentAt    DateTime          @map("payment_at") @db.Timestamp(0)
+  totalAmount  Decimal           @map("total_amount") @db.Decimal(10, 2)
+  totalPay     Decimal           @map("total_pay") @db.Decimal(10, 2)
+  discount     Decimal           @db.Decimal(10, 2)
+  status       TransactionStatus
+  itempayments ItemPayment[]
 
   @@map("transactions")
 }
@@ -238,5 +247,5 @@ model LandingImage {
 enum TransactionStatus {
   PENDING
   COMPLETE
-  CANCEL
+  FAIL
 }
