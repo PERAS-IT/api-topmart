@@ -7,28 +7,52 @@ const {
   validateLogin,
   validateRegister,
 } = require("../middlewares/validators/validate-auth");
+const { Role } = require("@prisma/client");
+const { validateUserId } = require("../middlewares/validators/validate-userId");
 
 const adminRoute = Router();
 
 adminRoute.post(
   "/register",
   authenticate,
-  checkPermission("SUPERADMIN"),
+  checkPermission(Role.SUPERADMIN),
   validateRegister,
   c.admin.register
 );
 
-adminRoute.post("/login", validateLogin, c.admin.login);
-
 adminRoute.get(
   "/allUser",
   authenticate,
-  checkPermission("ADMIN"),
+  checkPermission(Role.ADMIN),
   c.admin.getAllUser
 );
 
 adminRoute.get(
   "/allAdmin",
   authenticate,
-  checkPermission("SUPERADMIN", c.admin.getAllAdmin)
+  checkPermission(Role.SUPERADMIN, c.admin.getAllAdmin)
+);
+
+adminRoute.patch(
+  "/:userId/banned/user",
+  authenticate,
+  checkPermission(Role.ADMIN),
+  validateUserId,
+  c.admin.bannedUser
+);
+
+adminRoute.patch(
+  "/:userId/unbanned/user",
+  authenticate,
+  checkPermission(Role.ADMIN),
+  validateUserId,
+  c.admin.unbannedUser
+);
+
+adminRoute.patch(
+  "/:userId/banned/admin",
+  authenticate,
+  checkPermission(Role.SUPERADMIN),
+  validateUserId,
+  c.admin.bannedAdmin
 );

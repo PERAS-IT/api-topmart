@@ -81,6 +81,19 @@ module.exports.register = async (req, res, next) => {
   return;
 };
 
+module.exports.editProfile = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    const user = await repo.user.getOneById(id);
+    if (!user) throw new CustomError("user not found", "WRONG_INPUT", 400);
+    const profile = await repo.user.update({ id }, req.body);
+    res.status(200).json({ profile });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+
 // module.exports.update = async (req, res, next) => {
 //   try {
 //     const { id } = req.params;

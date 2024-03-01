@@ -15,6 +15,7 @@ const userRoute = express.Router();
 userRoute.post("/register", validateRegister, c.user.register);
 userRoute.post("/login", validateLogin, c.user.login);
 userRoute.get("/", authenticate, c.user.getMe);
+userRoute.patch("/:userId", authenticate, c.user.editProfile);
 // userRoute.put("/:id", c.user.update);
 userRoute.delete("/:userId", authenticate, validateUserId, c.user.delete);
 
