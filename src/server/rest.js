@@ -11,6 +11,7 @@ const { errorMiddlewares } = require("../middlewares/error");
 const CustomError = require("../config/error");
 const userRoute = require("../router/user");
 const productRoute = require("../router/product");
+const adminRoute = require("../router/admin");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
@@ -32,6 +33,7 @@ module.exports = function restApiServer(app) {
   });
   app.use("/user", userRoute);
   app.use("/product", productRoute);
+  app.use("/admin", adminRoute);
   //=====================================================Throwing Zone
   app.use(notFound);
   app.use(errorMiddlewares);
