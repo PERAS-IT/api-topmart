@@ -30,10 +30,10 @@ module.exports.getOneById = async (id) =>
   await prisma.user.findFirst({ where: { id } });
 // แบน user
 module.exports.bannedUser = async (id) =>
-  await prisma.user.update({ data: { isActive: false } });
+  await prisma.user.update({ data: { isActive: false }, where: { id } });
 // ปลดแบน user
 module.exports.unbannedUser = async (id) =>
-  await prisma.user.update({ data: { isActive: true } });
+  await prisma.user.update({ data: { isActive: true }, where: { id } });
 // สมัคร user
 module.exports.create = async (data) => await prisma.user.create({ data });
 // สร้าง user profile
@@ -70,7 +70,7 @@ module.exports.createSub = async (data) =>
 module.exports.updateSub = async (data, userId) =>
   prisma.userSubscribe.update({ where: { userId }, data });
 // ลบ user
-module.exports.delete = async ({ id }) =>
+module.exports.delete = async (id) =>
   await prisma.user.delete({ where: { id } });
 
 // =========================================== CUSTOM REPOSITORY ===================================

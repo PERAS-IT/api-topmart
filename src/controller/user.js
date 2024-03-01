@@ -3,26 +3,6 @@ const utils = require("../utils");
 const { CustomError } = require("../config/error");
 const { Role } = require("@prisma/client");
 
-// module.exports.getAll = async (req, res, next) => {
-//   try {
-//     const users = await repo.user.getAll();
-//     res.status(200).json({ users });
-//   } catch (err) {
-//     next(err);
-//   }
-//   return;
-// };
-// module.exports.get = async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     const user = await repo.user.get({ id });
-//     res.status(200).json({ user });
-//   } catch (err) {
-//     next(err);
-//   }
-//   return;
-// };
-
 // LOGIN
 module.exports.login = async (req, res, next) => {
   try {
@@ -78,7 +58,6 @@ module.exports.register = async (req, res, next) => {
     await repo.user.createUserProfile(user.id);
     // SIGN token from user data
     const token = utils.jwt.sign(user);
-
     res.status(201).json({ user, token });
   } catch (err) {
     next(err);
@@ -123,7 +102,6 @@ module.exports.getUserProfile = async (req, res, next) => {
 // CREATE USER ADDRESS
 module.exports.createUserAddress = async (req, res, next) => {
   try {
-    console.log(req.body);
     req.body.userId = req.user.id;
     const userAddress = await repo.user.createUserAddress(req.body);
     res.status(201).json({ userAddress });
@@ -191,13 +169,14 @@ module.exports.subscribeWeb = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+  return;
 };
 
 module.exports.delete = async (req, res, next) => {
   try {
     console.log(req.userId);
-    await repo.user.delete({ id: req.userId });
-    res.status(200);
+    await repo.user.delete(req.userId);
+    res.status(200).json({});
   } catch (err) {
     next(err);
   }

@@ -10,6 +10,9 @@ const { validateUserId } = require("../middlewares/validators/validate-userId");
 const {
   validateAddressId,
 } = require("../middlewares/validators/validate-addressId");
+const {
+  validateUserAddress,
+} = require("../middlewares/validators/validate-userAddress");
 
 const userRoute = express.Router();
 
@@ -24,7 +27,12 @@ userRoute.patch("/profile", authenticate, c.user.editProfile);
 // see user profile
 userRoute.get("/profile", authenticate, c.user.getUserProfile);
 // create user address
-userRoute.post("/address", authenticate, c.user.createUserAddress);
+userRoute.post(
+  "/address",
+  authenticate,
+  validateUserAddress,
+  c.user.createUserAddress
+);
 // delete user address
 userRoute.delete(
   "/address/:addressId",
