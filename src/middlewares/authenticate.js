@@ -4,7 +4,6 @@ const CustomError = require("../config/error");
 
 module.exports = async function authenticate(req, res, next) {
   try {
-    console.log(req.headers.authorization);
     if (!req?.headers?.authorization) throw new Error();
     const authorization = req?.headers?.authorization.startsWith("Bearer")
       ? req.headers.authorization
