@@ -30,10 +30,10 @@ module.exports.getOneById = async (id) =>
   await prisma.user.findFirst({ where: { id } });
 // แบน user
 module.exports.bannedUser = async (id) =>
-  await prisma.user.update({ data: { isActive: false } });
+  await prisma.user.update({ data: { isActive: false }, where: { id } });
 // ปลดแบน user
 module.exports.unbannedUser = async (id) =>
-  await prisma.user.update({ data: { isActive: true } });
+  await prisma.user.update({ data: { isActive: true }, where: { id } });
 // สมัคร user
 module.exports.create = async (data) => await prisma.user.create({ data });
 // สร้าง user profile
@@ -51,6 +51,8 @@ module.exports.createUserAddress = async (data) =>
 // ดู user address ตาม id
 module.exports.getUserAddressById = async (id) =>
   await prisma.userAddress.findFirst({ where: { id } });
+module.exports.getUserAddressSetDefault = async (userId) =>
+  await prisma.userAddress.findFirst({ where: { userId, setDefault: true } });
 // ลบ user address
 module.exports.deleteUserAddress = async (id) =>
   await prisma.userAddress.delete({ where: { id } });
@@ -69,8 +71,11 @@ module.exports.createSub = async (data) =>
 // อัพเดท ตาราง sub
 module.exports.updateSub = async (data, userId) =>
   prisma.userSubscribe.update({ where: { userId }, data });
+// ลบ account (soft delete)
+module.exports.deleteAccount = async (id) =>
+  prisma.user.update({ where: id, data: { isActive: false } });
 // ลบ user
-module.exports.delete = async ({ id }) =>
+module.exports.delete = async (id) =>
   await prisma.user.delete({ where: { id } });
 
 // =========================================== CUSTOM REPOSITORY ===================================
