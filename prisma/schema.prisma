@@ -106,9 +106,9 @@ model LiveChat {
 }
 
 model ProductSeries {
-  id       Int        @id @default(autoincrement())
-  series   String     @unique
-  products Products[]
+  id      Int        @id @default(autoincrement())
+  series  String     @unique
+  product Products[]
 
   @@map("product_series")
 }

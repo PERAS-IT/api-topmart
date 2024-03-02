@@ -5,7 +5,8 @@ const { uploadMiddleware } = require("../middlewares/upload");
 
 const productRoute = express.Router();
 
-productRoute.get("/group_product", c.product.getAllGroup);
+productRoute.get("/group_product", c.product.getAllGroup); // tcp
+productRoute.get("/series", c.product.getAllSeries); // tcp
 
 productRoute.get("/", c.product.getAllProduct);
 productRoute.get("/:productId", c.product.getProductById);
