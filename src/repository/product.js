@@ -2,6 +2,9 @@ const prisma = require("../config/prisma");
 
 //table Series
 
+module.exports.getAllSeries = async () => {
+  return await prisma.productSeries.findMany();
+};
 module.exports.findSeries = async (series) =>
   await prisma.productSeries.findFirst({
     where: {
@@ -27,6 +30,7 @@ module.exports.editProductSeries = async (idSeries, nameSeries) =>
 module.exports.getAllGroup = async () => {
   return await prisma.productGroup.findMany();
 };
+
 module.exports.findProductGroupByCategory = async (categories) =>
   await prisma.productClass.findFirst({
     where: {
@@ -46,21 +50,16 @@ module.exports.editProductGroup = async (idGroup, data) => {
   });
 };
 
+//*****************************
 // table product
 module.exports.createProduct = async (data) =>
   await prisma.products.create({ data });
-
-module.exports.createProductImage = async (data) =>
-  await prisma.productImages.create({ data });
-
-module.exports.createProductPoster = async (data) =>
-  await prisma.productPoster.create({ data });
 
 module.exports.getAllProduct = async () =>
   await prisma.products.findMany({
     include: {
       productSeries,
-      productClass,
+      productGroup,
       productImages,
       productPosters,
     },

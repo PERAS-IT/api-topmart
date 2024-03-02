@@ -2,19 +2,19 @@ const { PrismaClient, Role } = require("@prisma/client");
 const fs = require("fs");
 const prisma = new PrismaClient();
 
-async function seedingGroup() {
-  const rawData = fs.readFileSync("prisma/data/dataGroup.json");
+async function seedingPoster() {
+  const rawData = fs.readFileSync("prisma/data/posterProduct.json");
   console.log(rawData);
   const data = JSON.parse(rawData);
 
   for (const item of data) {
-    await prisma.productGroup.create({
+    await prisma.productPosters.create({
       data: item,
     });
   }
 }
 
-seedingGroup()
+seedingPoster()
   .catch((e) => {
     throw e;
   })

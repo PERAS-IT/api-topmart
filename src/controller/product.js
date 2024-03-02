@@ -1,3 +1,4 @@
+const { link } = require("joi");
 const { CustomError } = require("../config/error");
 const repo = require("../repository");
 const utils = require("../utils");
@@ -13,6 +14,17 @@ module.exports.getAllGroup = async (req, res, next) => {
     console.log(err);
   }
   return;
+};
+
+// GET ALL SERIES
+module.exports.getAllSeries = async (req, res, next) => {
+  try {
+    const result = await repo.product.getAllSeries();
+    res.status(200).json({ result });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 };
 
 //CREATE PRODUCT SERIES
@@ -69,42 +81,57 @@ module.exports.createProductGroup = async (req, res, next) => {
 
 //CREATE PRODUCT
 module.exports.createProduct = async (req, res, next) => {
-  console.log(req.files.imageProduct);
   try {
     const productData = req.body;
-    console.log(productData);
+    // for post man
+    productData.serieId = +req.body.serieId;
+    productData.groupId = +req.body.groupId;
+    productData.price = +req.body.price;
+    productData.stockQuantity = +req.body.stockQuantity;
+    productData.launchDate = new Date();
 
-    const product = await repo.product.createProduct(productData);
+    let photoProduct = [];
+    let photoLinkProduct = [];
+    // update table product
+    const newProduct = await repo.product.createProduct(productData);
 
-    const productPromises = req.files.imageProduct.map(async (image) => {
+    // upload cloudinary
+    const productPath = req.files.imageProduct.map(
+      async (image) => await utils.cloudinary.upload(image.path)
+    );
+    photoLinkProduct = await Promise.all(productPath);
+    // update link on table product image
+    const updateLinkProduct = photoLinkProduct.map((link) => {
       const data = {
-        productId: product.id,
-        imageProduct: await utils.cloudinary(image.path),
+        productId: newProduct.id,
+        images: link,
       };
-      return await repo.product.createImageProduct(data);
+      return repo.product.createImageProduct(data);
+    });
+    photoProduct = await Promise.all(updateLinkProduct);
+
+    // update poster
+    let photoPoster = [];
+    let photoLinkPoster = [];
+
+    //upload cloudinary
+    const posterPath = req.files.imagePoster.map(
+      async (image) => await utils.cloudinary.upload(image.path)
+    );
+    photoLinkPoster = await Promise.all(posterPath);
+
+    //upload update Table
+    const updateLinkPoster = photoLinkPoster.map((link) => {
+      const data = {
+        productId: newProduct.id,
+        posters: link,
+      };
+      return repo.product.createImagePoster(data);
     });
 
-    const posterPromises = req.files.imagePoster.map(async (image) => {
-      const data = {
-        productId: product.id,
-        imagePoster: await utils.cloudinary(image.path),
-      };
-      return await repo.product.createImagePoster(data);
-    });
+    photoPoster = await Promise.all(updateLinkPoster);
 
-    await Promise.all([...productPromises, ...posterPromises]);
-    // for (image of req.files.imageProduct) {
-    //   data.imageProduct = await utils.cloudinary(image.path);
-    //   const linkProductImage = await repo.product.createImageProduct(data);
-    //   productImages.push(linkProductImage);
-    // }
-    // for (image of req.files.imagePoster) {
-    //   data.imagePoster = await utils.cloudinary(image.path);
-    //   const linkPosterImage = await repo.product.createImagePoster(date);
-    //   posterImages.push(linkPosterImage);
-    // }
-
-    res.status(201).json({ message: "create success" });
+    res.status(201).json({ message: "create success" }); // return ???
   } catch (err) {
     console.log(err);
     next(err);
@@ -120,6 +147,7 @@ module.exports.createProduct = async (req, res, next) => {
 
 //GET ALL PRODUCT
 module.exports.getAllProduct = async (req, res, next) => {
+  console.log(req);
   try {
     const resultAllProduct = await repo.product.getAllProduct();
     res.status(200).json({ resultAllProduct });
