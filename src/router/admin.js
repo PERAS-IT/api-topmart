@@ -31,7 +31,7 @@ adminRoute.get(
   checkPermission(Role.SUPERADMIN),
   c.admin.getAllAdmin
 );
-// admin ban user
+// superadmin or admin ban user
 adminRoute.patch(
   "/:userId/banned/user",
   authenticate,
@@ -39,7 +39,7 @@ adminRoute.patch(
   validateUserId,
   c.admin.bannedUser
 );
-// admin unban user
+// superadmin or admin unban user
 adminRoute.patch(
   "/:userId/unBanned/user",
   authenticate,
@@ -47,7 +47,7 @@ adminRoute.patch(
   validateUserId,
   c.admin.unbannedUser
 );
-// superadmin ban alluser
+// superadmin ban admin
 adminRoute.patch(
   "/:userId/banned/admin",
   authenticate,
@@ -55,9 +55,9 @@ adminRoute.patch(
   validateUserId,
   c.admin.bannedBySuperAdmin
 );
-// superadmin unban alluser
+// superadmin unban admin
 adminRoute.patch(
-  "/:userId/unBanned",
+  "/:userId/unBanned/admin",
   authenticate,
   checkPermission(Role.SUPERADMIN),
   validateUserId,
