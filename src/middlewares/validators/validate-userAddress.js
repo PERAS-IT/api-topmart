@@ -2,7 +2,7 @@ const Joi = require("joi");
 const validate = require("./validator");
 
 const userAddressSchema = Joi.object({
-  fristName: Joi.string().trim().required().messages({
+  firstName: Joi.string().trim().required().messages({
     "string.empty": "firstName is required",
     "any.required": "firstName is required",
   }),
@@ -20,7 +20,7 @@ const userAddressSchema = Joi.object({
     }),
   apartmentSuite: Joi.string(),
   cityVillage: Joi.string(),
-  zipCode: Joi.string().pattern(/^[0-9]{,10}$/),
+  zipCode: Joi.string().pattern(/^[0-9]{5,10}$/),
   province: Joi.string().trim().required().messages({
     "string.empty": "province is required",
     "any.required": "province is required",
