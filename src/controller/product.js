@@ -82,6 +82,12 @@ module.exports.createProductGroup = async (req, res, next) => {
 //CREATE PRODUCT
 module.exports.createProduct = async (req, res, next) => {
   try {
+    const { productName } = req.body;
+    const searchProduct = await repo.product.findProductByName(productName);
+
+    if (searchProduct) {
+      throw new CustomError("name has been exist", "WRONG_INPUT", 400);
+    }
     const productData = req.body;
     // for post man
     productData.serieId = +req.body.serieId;
@@ -92,6 +98,7 @@ module.exports.createProduct = async (req, res, next) => {
 
     let photoProduct = [];
     let photoLinkProduct = [];
+
     // update table product
     const newProduct = await repo.product.createProduct(productData);
 
@@ -144,10 +151,68 @@ module.exports.createProduct = async (req, res, next) => {
     }
   }
 };
+// EDIT PRODUCT
+module.exports.editProduct = async (req, res, next) => {
+  try {
+    const prodId = +req.params;
+    const { productName } = req.body;
+    const searchNameDuplicate = await repo.product.findProductDuplicate(
+      productName
+    );
+    if (searchNameDuplicate.length > 1) {
+      throw new CustomError("Product name is duplicate", "WRONG_INPUT", 400);
+    }
+    const data = req.body;
+    const updateResult = await repo.product.editProduct(prodId, data);
+    res.status(200).json({ updateResult });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+// DELETE PRODUCT
+module.exports.deleteProduct = async (req, res, next) => {
+  try {
+    const productId = +req.params.productId;
+
+    // searchImage by product id
+    const resultSearch = searchImageByProductId(productId);
+
+    // delete on cloudinary
+    const promisesDelete = resultSearch.map(async (imageURL) => {
+      let publicId = imageURL.split("v1709356485/")[1].split(".png")[0];
+      utils.cloudinary.delete(publicId);
+    });
+    await Promise.all(promisesDelete);
+
+    // delete on table
+    await repo.product.deleteImageByProductId(productId);
+    res.status(200).json({ message: "delete success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+// DELETE IMAGE BY IMAGE ID
+module.exports.deleteImage = async (req, res, next) => {
+  try {
+    const imageId = +req.params.imageId;
+    const imageURL = await repo.product.searchImageByImageId(imageId);
+    const promisesDeleteCloud = imageURL
+      .split("v1709356485/")[1]
+      .split(".png")[0];
+    const promisesDeleteTable = repo.product.deleteImageByProductId(imageId);
+    await Promise.all(promisesDeleteCloud, promisesDeleteTable);
+    res.status(200).json({ message: "deleteImage Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
 
 //GET ALL PRODUCT
 module.exports.getAllProduct = async (req, res, next) => {
-  console.log(req);
   try {
     const resultAllProduct = await repo.product.getAllProduct();
     res.status(200).json({ resultAllProduct });
@@ -156,9 +221,29 @@ module.exports.getAllProduct = async (req, res, next) => {
     next(err);
   }
 };
+//GET PRODUCT BY ID
+module.exports.getProductById = async (req, res, next) => {
+  try {
+    const productId = +req.params.productId;
+    const resultProductById = await repo.product.getProductById(productId);
+    res.status(200).json({ resultProductById });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 //GET PRODUCT BY PRODUCT SERIES
-module.exports.getProductByIdSeries = async (req, res, next) => {};
+module.exports.getProductByIdSeries = async (req, res, next) => {
+  try {
+    const serieId = +req.params.productId;
+    const resultProductById = await repo.product.findSeries(serieId);
+    res.status(200).json({ resultProductById });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 //GET PRODUCT BY GROUP
 module.exports.getProductByIdGroup = async (req, res, next) => {};
-//GET PRODUCT BY ID
-module.exports.getProductById = async (req, res, next) => {};

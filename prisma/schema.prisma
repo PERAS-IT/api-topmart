@@ -134,7 +134,7 @@ model Products {
   productSeries  ProductSeries    @relation(fields: [serieId], references: [id])
   groupId        Int              @map("group_id")
   productGroup   ProductGroup     @relation(fields: [groupId], references: [id])
-  productName    String           @map("product_name")
+  productName    String           @unique @map("product_name")
   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
   launchDate     DateTime         @map("launch_date") @db.Date
   price          Decimal          @db.Decimal(10, 2)

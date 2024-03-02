@@ -2,7 +2,7 @@ const { PrismaClient, Role } = require("@prisma/client");
 const fs = require("fs");
 const prisma = new PrismaClient();
 
-async function seedingGroup() {
+async function seedingSeries() {
   const rawData = fs.readFileSync("prisma/data/dataSeries.json");
   console.log(rawData);
   const data = JSON.parse(rawData);
@@ -14,7 +14,7 @@ async function seedingGroup() {
   }
 }
 
-seedingGroup()
+seedingSeries()
   .catch((e) => {
     throw e;
   })
