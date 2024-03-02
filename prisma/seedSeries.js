@@ -3,12 +3,12 @@ const fs = require("fs");
 const prisma = new PrismaClient();
 
 async function seedingGroup() {
-  const rawData = fs.readFileSync("prisma/data/dataGroup.json");
+  const rawData = fs.readFileSync("prisma/data/dataSeries.json");
   console.log(rawData);
   const data = JSON.parse(rawData);
 
   for (const item of data) {
-    await prisma.productGroup.create({
+    await prisma.productSeries.create({
       data: item,
     });
   }
