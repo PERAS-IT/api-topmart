@@ -5,9 +5,15 @@ const { uploadMiddleware } = require("../middlewares/upload");
 
 const productRoute = express.Router();
 
-productRoute.get("/group_product", c.product.getAllGroup); // tcp
-productRoute.get("/series", c.product.getAllSeries); // tcp
-
+//=======================================SERIES======
+productRoute.get("/series", c.product.getAllSeries);
+productRoute.post("/series/create", c.product.createProductSeries);
+productRoute.patch("/series/:seriesId", c.product.editProductSeries);
+//=======================================GROUP=======
+productRoute.get("/group_product", c.product.getAllGroup);
+productRoute.post("/group_product/create", c.product.createProductGroup);
+productRoute.patch("/group_product/:groupId", c.product.editGroup);
+//=======================================PRODUCT=====
 productRoute.get("/", c.product.getAllProduct);
 productRoute.get("/:productId", c.product.getProductById);
 productRoute.post("/create_series", c.product.createProductSeries);

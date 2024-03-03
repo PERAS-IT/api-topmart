@@ -43,6 +43,8 @@ module.exports.editProductSeries = async (idSeries, nameSeries) =>
 module.exports.getAllGroup = async () => {
   return await prisma.productGroup.findMany();
 };
+module.exports.findGroupByCategory = async (categories) =>
+  await prisma.productGroup.findFirst({ where: { categories: categories } });
 
 module.exports.findProductGroupByCategory = async (id) =>
   await prisma.productGroup.findFirst({

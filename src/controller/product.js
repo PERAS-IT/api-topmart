@@ -4,18 +4,7 @@ const repo = require("../repository");
 const utils = require("../utils");
 const fs = require("fs/promises");
 
-//GET PRODUCT GROUP
-
-module.exports.getAllGroup = async (req, res, next) => {
-  try {
-    const getAllGroup = await repo.product.getAllGroup();
-    res.status(200).json({ getAllGroup });
-  } catch (err) {
-    console.log(err);
-  }
-  return;
-};
-
+//=======================================SERIES======
 // GET ALL SERIES
 module.exports.getAllSeries = async (req, res, next) => {
   try {
@@ -57,14 +46,24 @@ module.exports.editProductSeries = async (req, res, next) => {
     next(err);
   }
 };
+//=======================================GROUP=======
+//GET PRODUCT GROUP
+
+module.exports.getAllGroup = async (req, res, next) => {
+  try {
+    const getAllGroup = await repo.product.getAllGroup();
+    res.status(200).json({ getAllGroup });
+  } catch (err) {
+    console.log(err);
+  }
+  return;
+};
 
 //CREATE PRODUCT GROUP
 module.exports.createProductGroup = async (req, res, next) => {
   try {
     const { categories } = req.body;
-    const searchCategories = await repo.product.findProductGroupByCategory(
-      categories
-    );
+    const searchCategories = await repo.product.findGroupByCategory(categories);
 
     if (searchCategories) {
       throw new CustomError("category had been to used", "WRONG_INPUT", 400);
@@ -79,6 +78,27 @@ module.exports.createProductGroup = async (req, res, next) => {
   }
 };
 
+//EDIT PRODUCT GROUP
+module.exports.editGroup = async (req, res, next) => {
+  try {
+    const groupId = +req.params.groupId;
+    const { categories } = req.body;
+    const searchCategories = await repo.product.findGroupByCategory(categories);
+    console.log(searchCategories);
+    if (searchCategories) {
+      throw new CustomError("category had been to used", "WRONG_INPUT", 400);
+    }
+    const data = req.body;
+    console.log(data);
+    const response = await repo.product.editProductGroup(groupId, data);
+    res.status(200).json({ message: "ok" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+//=======================================PRODUCT=====
 //CREATE PRODUCT
 module.exports.createProduct = async (req, res, next) => {
   try {
@@ -180,6 +200,7 @@ module.exports.deleteProduct = async (req, res, next) => {
 
     // delete on cloudinary
     const promisesDelete = resultSearch.map(async (imageURL) => {
+      console.log(imageURL);
       let publicId = imageURL.split("v1709356485/")[1].split(".png")[0];
       utils.cloudinary.delete(publicId);
     });
@@ -199,11 +220,16 @@ module.exports.deleteImage = async (req, res, next) => {
   try {
     const imageId = +req.params.imageId;
     const imageURL = await repo.product.searchImageByImageId(imageId);
-    const promisesDeleteCloud = imageURL
-      .split("v1709356485/")[1]
-      .split(".png")[0];
-    const promisesDeleteTable = repo.product.deleteImageByProductId(imageId);
-    await Promise.all(promisesDeleteCloud, promisesDeleteTable);
+
+    let publicId = imageURL.images.split("/")[7].split(".")[0];
+    console.log(publicId);
+    const promisesDeleteCloud = await utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = await repo.product.deleteProductImageById(
+      imageId
+    );
+    Promise.all([promisesDeleteCloud, promisesDeleteTable]).then((values) => {
+      console.log(values);
+    });
     res.status(200).json({ message: "deleteImage Success" });
   } catch (err) {
     console.log(err);
@@ -211,6 +237,27 @@ module.exports.deleteImage = async (req, res, next) => {
   }
 };
 
+//DELETE POSTER BY POSTER ID
+module.exports.deletePoster = async (req, res, next) => {
+  try {
+    const imageId = +req.params.imageId;
+    const imageURL = await repo.product.searchImageByImageId(imageId);
+
+    let publicId = imageURL.images.split("/")[7].split(".")[0];
+    console.log(publicId);
+    const promisesDeleteCloud = await utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = await repo.product.deletePosterByPosterId(
+      imageId
+    );
+    Promise.all([promisesDeleteCloud, promisesDeleteTable]).then((values) => {
+      console.log(values);
+    });
+    res.status(200).json({ message: "deleteImage Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
 //GET ALL PRODUCT
 module.exports.getAllProduct = async (req, res, next) => {
   try {
