@@ -16,6 +16,8 @@ const {
 const {
   validateProfile,
 } = require("../middlewares/validators/validate-userProfile");
+const { checkPermission } = require("../middlewares/checkPermission");
+const { Role } = require("@prisma/client");
 
 const userRoute = express.Router();
 
@@ -56,7 +58,23 @@ userRoute.patch(
 userRoute.get("/address/all", authenticate, c.user.getAllUserAddress);
 // user subscribe web
 userRoute.patch("/subscribe", authenticate, c.user.subscribeWeb);
+// user add cartItem in cart
+userRoute.patch(
+  "/cart",
+  authenticate,
+  checkPermission(Role.USER),
+  c.user.updateCart
+);
+// user delete cartItem in cart
+userRoute.delete(
+  "/cart/:cartItemId",
+  authenticate,
+  checkPermission(Role.USER),
+  c.user.deleteItemInCart
+);
+// user see all item in cart
+userRoute.get("/cart", authenticate, c.user.getAllItemInCart);
+
 // delete user
 userRoute.delete("/:userId", authenticate, validateUserId, c.user.delete);
-
 module.exports = userRoute;
