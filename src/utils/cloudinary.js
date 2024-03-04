@@ -6,3 +6,8 @@ exports.upload = async (path) => {
   });
   return secure_url;
 };
+
+exports.delete = async (publicId) => {
+  const result = await cloudinary.uploader.destroy(publicId);
+  console.log(result);
+};

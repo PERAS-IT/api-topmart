@@ -134,7 +134,7 @@ model Products {
   productSeries  ProductSeries    @relation(fields: [serieId], references: [id])
   groupId        Int              @map("group_id")
   productGroup   ProductGroup     @relation(fields: [groupId], references: [id])
-  productName    String           @map("product_name")
+  productName    String           @unique @map("product_name")
   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
   launchDate     DateTime         @map("launch_date") @db.Date
   price          Decimal          @db.Decimal(10, 2)
@@ -142,6 +142,7 @@ model Products {
   isNew          Boolean          @default(true) @map("is_new")
   isHot          Boolean          @default(false) @map("is_hot")
   isSoldOut      Boolean          @default(false) @map("is_sold_out")
+  isActive       Boolean          @default(true) @map("is_active")
   brand          String?
   size           String?
   material       String?
@@ -151,6 +152,7 @@ model Products {
   productPosters ProductPosters[]
   cartItems      CartItems[]
   itemPayments   ItemPayment[]
+  productCover   ProductCover[]
 
   @@map("products")
 }
@@ -166,6 +168,13 @@ model WatchList {
   @@map("watch_lists")
 }
 
+model ProductCover {
+  id         Int      @id @default(autoincrement())
+  cover      String?
+  productsId Int      @map("product_id")
+  Products   Products @relation(fields: [productsId], references: [id])
+}
+
 model ProductImages {
   id        Int      @id @default(autoincrement())
   images    String
@@ -177,7 +186,11 @@ model ProductImages {
 
 model ProductPosters {
   id        Int      @id @default(autoincrement())
-  posters   String
+  posters1  String?
+  posters2  String?
+  posters3  String?
+  posters4  String?
+  posters5  String?
   productId Int      @map("product_id")
   products  Products @relation(fields: [productId], references: [id])
 
@@ -212,8 +225,8 @@ model ItemPayment {
   transaction   Transaction   @relation(fields: [transactionId], references: [id])
   payStatus     PaymentStatus
   transactionId Int           @map("transaction_id")
-  Products      Products?     @relation(fields: [productsId], references: [id])
-  productsId    Int?          @map("product_id")
+  Products      Products      @relation(fields: [productsId], references: [id])
+  productsId    Int           @map("product_id")
 
   @@map("item_payments")
 }
@@ -240,8 +253,12 @@ model Transaction {
 }
 
 model LandingImage {
-  id    Int    @id @default(autoincrement())
-  image String
+  id     Int     @id @default(autoincrement())
+  image1 String?
+  image2 String?
+  image3 String?
+  image4 String?
+  image5 String?
 }
 
 enum TransactionStatus {
