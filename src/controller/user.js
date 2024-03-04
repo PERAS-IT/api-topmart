@@ -87,6 +87,8 @@ module.exports.editProfile = async (req, res, next) => {
 // GET ME
 module.exports.getMe = async (req, res, next) => {
   try {
+    const userProfile = await repo.user.getUserProfile(req.user.id);
+    req.user.userProfile = userProfile;
     res.status(200).json({ user: req.user });
   } catch (err) {
     next(err);
@@ -252,6 +254,40 @@ module.exports.getAllItemInCart = async (req, res, next) => {
     }
     const cartItem = await repo.user.getAllItemIncartByCartId(cart.id);
     res.status(200).json({ cart: cartItem });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// USER CREATE TRANSACTION
+module.exports.createTransaction = async (req, res, next) => {
+  try {
+    const transaction = await repo.user.getTransactionByUserId(req.user.id);
+    if (transaction)
+      throw new CustomError("user already has transaction", "WRONG_INPUT", 400);
+    req.body.userId = req.user.id;
+    //  const id = req.productId;
+    //  delete req.body.cartItemId;
+    const newTransaction = await repo.user.createTransaction(req.body);
+    const itemId = req.params.split(",").map((el) => number(el));
+    const itemData = await repo.user.getCartItemByCartItemId(itemId);
+    for (data of itemData) {
+      data.transactionId = newTransaction.id;
+    }
+    res.status(201).json({ transaction: newTransaction });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// USER UPDATE TRANSACTION
+module.exports.updateTransaction = async (req, res, next) => {
+  try {
+    const transaction = await repo.user.getTransactionByUserId(req.user.id);
+    if (!transaction)
+      throw new CustomError("transaction not found", "WRONG_INPUT", 400);
+    const newStatus = await repo.user.updateTransaction(req.body, req.user.id);
+    res.status(200).json({ transaction: newStatus });
   } catch (err) {
     next(err);
   }
