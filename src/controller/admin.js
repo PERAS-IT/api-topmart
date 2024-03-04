@@ -23,8 +23,10 @@ module.exports.register = async (req, res, next) => {
     await repo.user.createUserProfile(admin.id);
     // Sign token
     const token = utils.jwt.sign(admin);
+    const userProfile = await repo.user.getUserProfile(admin.id);
+    admin.userProfile = userProfile;
 
-    res.status(201).json({ token });
+    res.status(201).json({ admin, token });
   } catch (err) {
     next(err);
   }

@@ -1,6 +1,5 @@
 const { Role } = require("@prisma/client");
 const prisma = require("../config/prisma");
-const { date } = require("joi");
 
 // =========================================== BASIC CRUD ===================================
 // ดู user
@@ -75,38 +74,21 @@ module.exports.updateSub = async (data, userId) =>
 // ลบ account (soft delete)
 module.exports.deleteAccount = async (id) =>
   prisma.user.update({ where: id, data: { isActive: false } });
-// สร้าง cartItem ของ user
-module.exports.createCartItem = async (data) =>
-  await prisma.cartItems.create({ data });
-// ดู cart ของ user
-module.exports.getCartbyUserId = async (userId) =>
-  await prisma.cart.findFirst({ where: { userId } });
-// สร้าง cart ของ user
-module.exports.createCart = async (data) => await prisma.cart.create({ data });
-// ดู cartItem ทัั้งหมด ของ user
-module.exports.getAllItemIncartByCartId = async (cartId) =>
-  await prisma.cartItems.findMany({ where: { cartId } });
-// ดู cartItem
-module.exports.getItemById = async (id) =>
-  await prisma.cartItems.findFirst({ where: { id } });
-// ลบ cartItem in cart
-module.exports.deleteItemIncart = async (id) =>
-  await prisma.cartItems.delete({ where: { id } });
-// ดู transaction
-module.exports.getTransactionByUserId = async (userId) =>
-  await prisma.transaction.findFirst({ where: { userId } });
-// สร้าง transaction
-module.exports.createTransaction = async (data) =>
-  await prisma.transaction.create({ data });
-// อัพเดท transaction
-module.exports.updateTransaction = async (data, id) =>
-  await prisma.transaction.update({ where: { id }, data });
-// เลือกดู cartitem จาก cartItemId
-module.exports.getCartItemByCartItemId = async (id) =>
-  await prisma.cartItems.findMany({
-    where: { id: { in: id } },
-    select: { quantity: true, price: true, productId: true },
-  });
+// // ดู transaction
+// module.exports.getTransactionByUserId = async (userId) =>
+//   await prisma.transaction.findFirst({ where: { userId } });
+// // สร้าง transaction
+// module.exports.createTransaction = async (data) =>
+//   await prisma.transaction.create({ data });
+// // อัพเดท transaction
+// module.exports.updateTransaction = async (data, id) =>
+//   await prisma.transaction.update({ where: { id }, data });
+// // เลือกดู cartitem จาก cartItemId
+// module.exports.getCartItemByCartItemId = async (id) =>
+//   await prisma.cartItems.findMany({
+//     where: { id: { in: id } },
+//     select: { quantity: true, price: true, productId: true },
+//   });
 module.exports.createItemPayment = async (data) =>
   await prisma.itemPayment.createMany({ data });
 // ลบ user
