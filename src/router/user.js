@@ -18,6 +18,12 @@ const {
 } = require("../middlewares/validators/validate-userProfile");
 const { checkPermission } = require("../middlewares/checkPermission");
 const { Role } = require("@prisma/client");
+const {
+  validateProductId,
+} = require("../middlewares/validators/validate-productId");
+const {
+  validateTransactionId,
+} = require("../middlewares/validators/validate-transactionId");
 
 const userRoute = express.Router();
 
@@ -74,6 +80,21 @@ userRoute.delete(
 );
 // user see all item in cart
 userRoute.get("/cart", authenticate, c.user.getAllItemInCart);
+// user create transaction
+userRoute.post(
+  "/transaction/:productId",
+  authenticate,
+  checkPermission(Role.USER),
+  validateProductId,
+  c.user.createTransaction
+);
+userRoute.patch(
+  "/transaction/:transactionId",
+  authenticate,
+  checkPermission(Role.USER),
+  validateTransactionId,
+  c.user.updateTransaction
+);
 
 // delete user
 userRoute.delete("/:userId", authenticate, validateUserId, c.user.delete);

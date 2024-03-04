@@ -3,7 +3,7 @@ const validate = require("./validator");
 const { CustomError } = require("../../config/error");
 
 const productIdSchema = Joi.object({
-  productId: Joi.number().required().positive(),
+  productId: Joi.array().items(Joi.number().positive().required()).min(1),
 });
 
 exports.validateProductId = (req, res, next) => {
