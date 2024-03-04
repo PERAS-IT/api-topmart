@@ -70,7 +70,7 @@ module.exports.createProductGroup = async (req, res, next) => {
     }
     const data = req.body;
     console.log(data);
-    const response = await repo.product.createProductClass(data);
+    const response = await repo.product.createProductGroup(data);
     res.status(200).json({ response });
   } catch (err) {
     console.log(err);
@@ -114,7 +114,7 @@ module.exports.createProduct = async (req, res, next) => {
     productData.groupId = +req.body.groupId;
     productData.price = +req.body.price;
     productData.stockQuantity = +req.body.stockQuantity;
-    productData.launchDate = new Date();
+    productData.launchDate = new Date(); // select date from front
 
     let photoProduct = [];
     let photoLinkProduct = [];
@@ -123,8 +123,15 @@ module.exports.createProduct = async (req, res, next) => {
     const newProduct = await repo.product.createProduct(productData);
 
     // upload cloudinary
-    const productPath = req.files.imageProduct.map(
-      async (image) => await utils.cloudinary.upload(image.path)
+
+    /***cover*****/
+    const coverLocalPath = req.files.cover.path;
+    const coverPath = await utils.cloudinary.upload(coverLocalPath);
+    await repo.product.createCover(coverPath);
+
+    /**product */
+    const productPath = req.files.imageProduct.map(async (image) =>
+      utils.cloudinary.upload(image.path)
     );
     photoLinkProduct = await Promise.all(productPath);
     // update link on table product image
@@ -142,6 +149,33 @@ module.exports.createProduct = async (req, res, next) => {
     let photoLinkPoster = [];
 
     //upload cloudinary
+    /*poster separate Path */
+    const posterLocalPath1 = req.files.poster1.path;
+    const posterLocalPath2 = req.files.poster2.path;
+    const posterLocalPath3 = req.files.poster3.path;
+    const posterLocalPath4 = req.files.poster4.path;
+    const posterLocalPath5 = req.files.poster5.path;
+
+    const posterPath1 = utils.cloudinary(posterLocalPath1);
+    const posterPath2 = utils.cloudinary(posterLocalPath2);
+    const posterPath3 = utils.cloudinary(posterLocalPath3);
+    const posterPath4 = utils.cloudinary(posterLocalPath4);
+    const posterPath5 = utils.cloudinary(posterLocalPath5);
+    await Promise.all([
+      posterPath1,
+      posterPath2,
+      posterPath3,
+      posterPath4,
+      posterPath5,
+    ]);
+    const data = {};
+    data.poster1 = posterPath1;
+    data.poster2 = posterPath2;
+    data.poster3 = posterPath3;
+    data.poster4 = posterPath4;
+    data.poster5 = posterPath5;
+    await repo.product.createPoster(data);
+
     const posterPath = req.files.imagePoster.map(
       async (image) => await utils.cloudinary.upload(image.path)
     );
@@ -194,21 +228,48 @@ module.exports.editProduct = async (req, res, next) => {
 module.exports.deleteProduct = async (req, res, next) => {
   try {
     const productId = +req.params.productId;
-
-    // searchImage by product id
-    const resultSearch = searchImageByProductId(productId);
-
+    await repo.product.deleteProductSoft(productId);
+    // delete image
+    const resultSearch = await repo.product.searchImagesByProductId(productId);
     // delete on cloudinary
-    const promisesDelete = resultSearch.map(async (imageURL) => {
-      console.log(imageURL);
-      let publicId = imageURL.split("v1709356485/")[1].split(".png")[0];
-      utils.cloudinary.delete(publicId);
-    });
-    await Promise.all(promisesDelete);
+    if (resultSearch.length > 1) {
+      const promisesDeleteCloud = resultSearch.map(async (imageURL) => {
+        let publicId = imageURL.images.split("/")[7].split(".")[0];
+        await utils.cloudinary.delete(publicId);
+        // delete on table
+        const promisesDeleteTable = await repo.product.deleteImageByProductId(
+          productId
+        );
+        Promise.all([promisesDeleteCloud, promisesDeleteTable]).then((value) =>
+          console.log(value)
+        );
+      });
+    }
+    // delete poster
+    const resultSearchPoster = await repo.product.searchPosterByProductId(
+      productId
+    );
+    if (resultSearchPoster.length > 1) {
+      const promisesDeleteCloud = resultSearchPoster.map(async (imageURL) => {
+        console.log(imageURL.posters);
+        let publicId = imageURL.posters.split("/")[7].split(".")[0];
+        await utils.cloudinary.delete(publicId);
+        // delete on table
+        const promisesDeleteTable = await repo.product.deletePosterByProductId(
+          productId
+        );
+        Promise.all([promisesDeleteCloud, promisesDeleteTable]).then((value) =>
+          console.log(value)
+        );
+      });
+    }
+    const checkImage = await repo.product.searchPosterByProductId(productId);
+    const checkPoster = await repo.product.searchPosterByProductId(productId);
+    if (checkImage.length < 1 && checkPoster.length < 1) {
+      await repo.product.deleteProduct(productId);
+    }
 
-    // delete on table
-    await repo.product.deleteImageByProductId(productId);
-    res.status(200).json({ message: "delete success" });
+    res.status(200).json({ message: "In Active success" });
   } catch (err) {
     console.log(err);
     next(err);
