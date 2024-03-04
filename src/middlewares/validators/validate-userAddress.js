@@ -19,6 +19,7 @@ const userAddressSchema = Joi.object({
       "any.required": "phone is required",
     }),
   apartmentSuite: Joi.string(),
+  other: Joi.string(),
   cityVillage: Joi.string(),
   zipCode: Joi.string().pattern(/^[0-9]{5,10}$/),
   province: Joi.string().trim().required().messages({

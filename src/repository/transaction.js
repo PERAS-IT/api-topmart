@@ -9,3 +9,6 @@ module.exports.createTransaction = async (data) =>
 // อัพเดท transaction
 module.exports.updateTransaction = async (data, id) =>
   await prisma.transaction.update({ where: { id }, data });
+// ลบ  transaction
+module.exports.deleteTransaction = async (id) =>
+  await prisma.transaction.delete({ where: { id } });
