@@ -55,6 +55,7 @@ module.exports.register = async (req, res, next) => {
     // DELETE KEY of password from user data
     delete user.password;
     // CREATE empty userProfile
+    console.log(user.id);
     await repo.user.createUserProfile(user.id);
     // SIGN token from user data
     const token = utils.jwt.sign(user);
