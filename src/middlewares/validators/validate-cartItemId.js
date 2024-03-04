@@ -7,7 +7,7 @@ const cartItemIdSchema = Joi.object({
 });
 
 exports.validateCartItemId = (req, res, next) => {
-  const { value, error } = validate(cartItemIdSchema);
+  const { value, error } = cartItemIdSchema.validate(req.params);
   if (error)
     throw new CustomError(
       "invalided pattern of cartItemId",

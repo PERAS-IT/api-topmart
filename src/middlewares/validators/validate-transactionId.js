@@ -7,7 +7,7 @@ const transactionIdSchema = Joi.object({
 });
 
 exports.validateTransactionId = (req, res, next) => {
-  const { error, value } = validate(transactionIdSchema);
+  const { error, value } = transactionIdSchema.validate(req.params);
   if (error)
     throw new CustomError(
       "invalided pattern of transactionId",
