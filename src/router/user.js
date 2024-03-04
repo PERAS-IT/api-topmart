@@ -75,7 +75,7 @@ userRoute.delete(
 // user see all item in cart
 userRoute.get("/cart", authenticate, c.user.getAllItemInCart);
 // user create transaction
-userRoute.post("/transaction");
+userRoute.post("/transaction", authenticate, checkPermission(Role.USER));
 
 // delete user
 userRoute.delete("/:userId", authenticate, validateUserId, c.user.delete);
