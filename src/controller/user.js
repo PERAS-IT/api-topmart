@@ -193,8 +193,10 @@ module.exports.subscribeWeb = async (req, res, next) => {
 // USER DELETE ACCOUNT
 module.exports.deleteAccount = async (req, res, next) => {
   try {
+    // FIND user
     const user = await repo.user.getOneById(req.user.id);
     if (!user) throw new CustomError("user not found", "WRONG_INPUT", 400);
+    // SOFT delete user
     await repo.user.bannedUser(req.user.id);
     res.status(200).json({ message: "delete account success" });
   } catch (err) {
@@ -202,7 +204,58 @@ module.exports.deleteAccount = async (req, res, next) => {
   }
   return;
 };
-
+// USER UPDATE CARTITEM IN CART
+module.exports.updateCart = async (req, res, next) => {
+  try {
+    // FIND cart
+    const cart = await repo.user.getCartbyUserId(req.user.id);
+    // IF no cart create cart then create cartItem
+    if (!cart) {
+      const newCart = await repo.user.createCart({ userId: req.user.id });
+      req.body.cartId = newCart.id;
+      const cartItem = await repo.user.createCartItem(req.body);
+      return res.status(200).json({ cart: cartItem });
+    }
+    // IF have cart create new cartItem
+    req.body.cartId = cart.id;
+    await repo.user.createCartItem(req.body);
+    const allItemInCart = await repo.user.getAllItemIncartByCartId(cart.id);
+    res.status(200).json({ cart: allItemInCart });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// USER DELETE CARTITEM IN CART
+module.exports.deleteItemInCart = async (req, res, next) => {
+  try {
+    const cartItem = await repo.user.getItemById(req.cartItemId);
+    if (!cartItem)
+      throw new CustomError("cartItem not found", "WRONG_INPUT", 400);
+    await repo.user.deleteItemIncart(req.cartItemId);
+    res.status(204).json({});
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// USER SEE ALL ITEM IN CART
+module.exports.getAllItemInCart = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const cart = await repo.user.getCartbyUserId(id);
+    if (!cart) {
+      const newCart = await repo.user.createCart({ userId: id });
+      const cartItem = await repo.user.getAllItemIncartByCartId(newCart.id);
+      return res.status(200).json({ cart: cartItem });
+    }
+    const cartItem = await repo.user.getAllItemIncartByCartId(cart.id);
+    res.status(200).json({ cart: cartItem });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
 module.exports.delete = async (req, res, next) => {
   try {
     console.log(req.userId);
