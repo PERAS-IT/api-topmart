@@ -38,7 +38,7 @@ module.exports = function restApiServer(app) {
   app.use("/admin", adminRoute);
   app.use("/landing", landingRoute);
 
-  scheduleDatabaseUpdate();
+  scheduleDatabaseUpdate("0 * * * *");
   //=====================================================Throwing Zone
   app.use(notFound);
   app.use(errorMiddlewares);

@@ -180,6 +180,7 @@ module.exports.subscribeWeb = async (req, res, next) => {
     const id = req.user.id;
     const isSubscribe = req.body.isSubscribe;
     req.body.userId = id;
+    console.log(req.body);
     // CHECK user has ever been sub
     const isSub = await repo.user.getSubscribe(id);
     if (!isSub && isSubscribe) {

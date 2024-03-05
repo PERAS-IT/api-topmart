@@ -75,6 +75,7 @@ userRoute.post(
   v.arrCart.validateArrCart,
   c.transaction.createTransaction
 );
+// update transaction user
 userRoute.patch(
   "/transaction/:transactionId",
   authenticate,
@@ -82,21 +83,28 @@ userRoute.patch(
   v.transactionId.validateTransactionId,
   c.transaction.updateTransaction
 );
+// user see transaction
+userRoute.get(
+  "/transaction",
+  authenticate,
+  c.transaction.getTransactionByUserId
+);
 
-// delete user
+// delete user for backend
 userRoute.delete(
   "/:userId",
   authenticate,
   v.userId.validateUserId,
   c.user.delete
 );
-// delete transaction
+// delete transaction for backend
 userRoute.delete(
   "/transaction/:transactionId",
   authenticate,
   v.transactionId.validateTransactionId,
   c.transaction.deleteTransaction
 );
+// delete itemPayment for backend
 userRoute.delete(
   "/paymentItem/:itemPaymentId",
   authenticate,
