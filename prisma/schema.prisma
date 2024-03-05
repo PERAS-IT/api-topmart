@@ -177,7 +177,7 @@ model ProductCover {
 
 model ProductImages {
   id        Int      @id @default(autoincrement())
-  images    String
+  images    String?
   productId Int      @map("product_id")
   products  Products @relation(fields: [productId], references: [id])
 
@@ -253,12 +253,8 @@ model Transaction {
 }
 
 model LandingImage {
-  id     Int     @id @default(autoincrement())
-  image1 String?
-  image2 String?
-  image3 String?
-  image4 String?
-  image5 String?
+  id    Int     @id @default(autoincrement())
+  image String?
 }
 
 enum TransactionStatus {

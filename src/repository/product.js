@@ -64,7 +64,7 @@ module.exports.createProductGroup = async (data) =>
   await prisma.productGroup.create({ data });
 
 module.exports.editProductGroup = async (idGroup, data) => {
-  await prisma.productGroup.update({
+  return await prisma.productGroup.update({
     where: {
       id: idGroup,
     },
@@ -91,7 +91,7 @@ module.exports.getAllProduct = async () =>
     include: {
       productSeries: true,
       productGroup: true,
-      productImages: true,
+      productCover: true,
     },
   });
 module.exports.getProductById = async (idProduct) =>
@@ -100,12 +100,13 @@ module.exports.getProductById = async (idProduct) =>
       id: idProduct,
     },
     include: {
+      productCover: true,
       productSeries: true,
       productGroup: true,
-      productImages: true,
       productPosters: true,
     },
   });
+
 module.exports.deleteProductSoft = async (id) =>
   await prisma.products.update({ where: { isActive: false } });
 
@@ -113,10 +114,31 @@ module.exports.deleteProduct = async (id) =>
   await prisma.products.delete({ where: { id } });
 //=======================================IMAGE=====
 //cover image
-exports.createCover = async (data) =>
-  await prisma.productCover.create({ data }); // wait create table
+
+module.exports.deleteCover = async (id) =>
+  await prisma.productCover.delete({ where: { id } });
+exports.createCover = async (productsId, cover) =>
+  await prisma.productCover.create({
+    data: {
+      productsId,
+      cover,
+    },
+  });
+module.exports.updateCover = async (id, coverURL) =>
+  await prisma.productCover.update({
+    where: {
+      id: id,
+    },
+    data: {
+      cover: coverURL,
+    },
+  });
+
+module.exports.searchCoverByCoverId = async (id) =>
+  await prisma.productCover.findFirst({ where: { id } });
 
 //table imageProduct
+
 exports.createImageProduct = async (data) =>
   await prisma.productImages.create({ data });
 
@@ -136,7 +158,7 @@ exports.searchImageByImageId = async (imageId) =>
   await prisma.productImages.findFirst({ where: { id: imageId } });
 
 //table posterProduct
-exports.createImagePoster = async (data) =>
+exports.createPoster = async (data) =>
   await prisma.productPosters.create({ data });
 exports.searchPosterByProductId = async (productId) =>
   await prisma.productPosters.findMany({ where: { productId } });
