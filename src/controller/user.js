@@ -31,6 +31,8 @@ module.exports.login = async (req, res, next) => {
     delete user.password;
     // SIGN token from user data
     const token = utils.jwt.sign(user);
+    const userProfile = await repo.user.getUserProfile(user.id);
+    user.userProfile = userProfile;
     res.status(200).json({ user, token });
   } catch (err) {
     next(err);
@@ -55,9 +57,12 @@ module.exports.register = async (req, res, next) => {
     // DELETE KEY of password from user data
     delete user.password;
     // CREATE empty userProfile
+    console.log(user.id);
     await repo.user.createUserProfile(user.id);
     // SIGN token from user data
     const token = utils.jwt.sign(user);
+    const userProfile = await repo.user.getUserProfile(user.id);
+    user.userProfile = userProfile;
     res.status(201).json({ user, token });
   } catch (err) {
     next(err);
@@ -86,6 +91,8 @@ module.exports.editProfile = async (req, res, next) => {
 // GET ME
 module.exports.getMe = async (req, res, next) => {
   try {
+    const userProfile = await repo.user.getUserProfile(req.user.id);
+    req.user.userProfile = userProfile;
     res.status(200).json({ user: req.user });
   } catch (err) {
     next(err);
@@ -204,58 +211,99 @@ module.exports.deleteAccount = async (req, res, next) => {
   }
   return;
 };
-// USER UPDATE CARTITEM IN CART
-module.exports.updateCart = async (req, res, next) => {
-  try {
-    // FIND cart
-    const cart = await repo.user.getCartbyUserId(req.user.id);
-    // IF no cart create cart then create cartItem
-    if (!cart) {
-      const newCart = await repo.user.createCart({ userId: req.user.id });
-      req.body.cartId = newCart.id;
-      const cartItem = await repo.user.createCartItem(req.body);
-      return res.status(200).json({ cart: cartItem });
-    }
-    // IF have cart create new cartItem
-    req.body.cartId = cart.id;
-    await repo.user.createCartItem(req.body);
-    const allItemInCart = await repo.user.getAllItemIncartByCartId(cart.id);
-    res.status(200).json({ cart: allItemInCart });
-  } catch (err) {
-    next(err);
-  }
-  return;
-};
-// USER DELETE CARTITEM IN CART
-module.exports.deleteItemInCart = async (req, res, next) => {
-  try {
-    const cartItem = await repo.user.getItemById(req.cartItemId);
-    if (!cartItem)
-      throw new CustomError("cartItem not found", "WRONG_INPUT", 400);
-    await repo.user.deleteItemIncart(req.cartItemId);
-    res.status(204).json({});
-  } catch (err) {
-    next(err);
-  }
-  return;
-};
-// USER SEE ALL ITEM IN CART
-module.exports.getAllItemInCart = async (req, res, next) => {
-  try {
-    const id = req.user.id;
-    const cart = await repo.user.getCartbyUserId(id);
-    if (!cart) {
-      const newCart = await repo.user.createCart({ userId: id });
-      const cartItem = await repo.user.getAllItemIncartByCartId(newCart.id);
-      return res.status(200).json({ cart: cartItem });
-    }
-    const cartItem = await repo.user.getAllItemIncartByCartId(cart.id);
-    res.status(200).json({ cart: cartItem });
-  } catch (err) {
-    next(err);
-  }
-  return;
-};
+// // USER UPDATE CARTITEM IN CART
+// module.exports.updateCart = async (req, res, next) => {
+//   try {
+//     // FIND cart
+//     const cart = await repo.cart.getCartbyUserId(req.user.id);
+//     // IF no cart create cart then create cartItem
+//     if (!cart) {
+//       const newCart = await repo.cart.createCart({ userId: req.user.id });
+//       req.body.cartId = newCart.id;
+//       const cartItem = await repo.cart.createCartItem(req.body);
+//       return res.status(200).json({ cart: cartItem });
+//     }
+//     // IF have cart create new cartItem
+//     req.body.cartId = cart.id;
+//     await repo.cart.createCartItem(req.body);
+//     const allItemInCart = await repo.cart.getAllItemIncartByCartId(cart.id);
+//     res.status(200).json({ cart: allItemInCart });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
+// // USER DELETE CARTITEM IN CART
+// module.exports.deleteItemInCart = async (req, res, next) => {
+//   try {
+//     const cartItem = await repo.cart.getItemById(req.cartItemId);
+//     if (!cartItem)
+//       throw new CustomError("cartItem not found", "WRONG_INPUT", 400);
+//     await repo.cart.deleteItemIncart(req.cartItemId);
+//     res.status(204).json({});
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
+// // USER SEE ALL ITEM IN CART
+// module.exports.getAllItemInCart = async (req, res, next) => {
+//   try {
+//     const id = req.user.id;
+//     const cart = await repo.cart.getCartbyUserId(id);
+//     if (!cart) {
+//       const newCart = await repo.cart.createCart({ userId: id });
+//       const cartItem = await repo.cart.getAllItemIncartByCartId(newCart.id);
+//       return res.status(200).json({ cart: cartItem });
+//     }
+//     const cartItem = await repo.cart.getAllItemIncartByCartId(cart.id);
+//     res.status(200).json({ cart: cartItem });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
+// // USER CREATE TRANSACTION
+// module.exports.createTransaction = async (req, res, next) => {
+//   try {
+//     const transaction = await repo.transaction.getTransactionByUserId(
+//       req.user.id
+//     );
+//     if (transaction)
+//       throw new CustomError("user already has transaction", "WRONG_INPUT", 400);
+//     req.body.userId = req.user.id;
+//     //  const id = req.productId;
+//     //  delete req.body.cartItemId;
+//     const newTransaction = await repo.transaction.createTransaction(req.body);
+//     const itemId = req.params.split(",").map((el) => number(el));
+//     const itemData = await repo.transaction.getCartItemByCartItemId(itemId);
+//     for (data of itemData) {
+//       data.transactionId = newTransaction.id;
+//     }
+//     res.status(201).json({ transaction: newTransaction });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
+// // USER UPDATE TRANSACTION
+// module.exports.updateTransaction = async (req, res, next) => {
+//   try {
+//     const transaction = await repo.transaction.getTransactionByUserId(
+//       req.user.id
+//     );
+//     if (!transaction)
+//       throw new CustomError("transaction not found", "WRONG_INPUT", 400);
+//     const newStatus = await repo.transaction.updateTransaction(
+//       req.body,
+//       req.user.id
+//     );
+//     res.status(200).json({ transaction: newStatus });
+//   } catch (err) {
+//     next(err);
+//   }
+//   return;
+// };
 module.exports.delete = async (req, res, next) => {
   try {
     console.log(req.userId);

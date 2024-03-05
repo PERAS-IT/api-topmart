@@ -223,10 +223,10 @@ model ItemPayment {
   quantity      Int
   price         Decimal       @db.Decimal(10, 2)
   transaction   Transaction   @relation(fields: [transactionId], references: [id])
-  payStatus     PaymentStatus
+  payStatus     PaymentStatus @default(PENDING)
   transactionId Int           @map("transaction_id")
-  Products      Products      @relation(fields: [productsId], references: [id])
-  productsId    Int           @map("product_id")
+  Products      Products      @relation(fields: [productId], references: [id])
+  productId     Int           @map("product_id")
 
   @@map("item_payments")
 }
@@ -242,11 +242,10 @@ model Transaction {
   userId       Int               @map("user_id")
   user         User              @relation(fields: [userId], references: [id])
   createAt     DateTime          @default(now()) @map("created_at") @db.Timestamp(0)
-  paymentAt    DateTime          @map("payment_at") @db.Timestamp(0)
+  paymentAt    DateTime?         @map("payment_at") @db.Timestamp(0)
   totalAmount  Decimal           @map("total_amount") @db.Decimal(10, 2)
-  totalPay     Decimal           @map("total_pay") @db.Decimal(10, 2)
   discount     Decimal           @db.Decimal(10, 2)
-  status       TransactionStatus
+  status       TransactionStatus @default(PENDING)
   itempayments ItemPayment[]
 
   @@map("transactions")
