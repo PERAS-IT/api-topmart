@@ -1,5 +1,4 @@
 const Joi = require("joi");
-const validate = require("./validator");
 const { CustomError } = require("../../config/error");
 
 const productIdSchema = Joi.object({
