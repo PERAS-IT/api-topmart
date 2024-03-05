@@ -6,7 +6,7 @@ module.exports = async function authenticate(req, res, next) {
   try {
     console.log("this is authenticate middleware");
     if (!req?.headers?.authorization)
-      throw new CustomError("authenticate fail", "UNAUTHENTICATE", 400);
+      next(new CustomError("authenticate fail", "UNAUTHENTICATE", 400));
     const authorization = req?.headers?.authorization.startsWith("Bearer")
       ? req.headers.authorization
       : next(new CustomError("Not found Bearer token", "InvalidToken", 400));

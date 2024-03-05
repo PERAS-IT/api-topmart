@@ -1,8 +1,11 @@
+const { TransactionStatus } = require("@prisma/client");
 const prisma = require("../config/prisma");
 
 // ดู transaction
 module.exports.getTransactionByUserId = async (userId) =>
-  await prisma.transaction.findFirst({ where: { userId } });
+  await prisma.transaction.findFirst({
+    where: { userId, status: TransactionStatus.PENDING },
+  });
 // สร้าง transaction
 module.exports.createTransaction = async (data) =>
   await prisma.transaction.create({ data });

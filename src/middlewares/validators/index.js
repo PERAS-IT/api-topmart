@@ -7,5 +7,7 @@ const validate = {
   userAddress: require("./validate-userAddress"),
   userId: require("./validate-userId"),
   userProfile: require("./validate-userProfile"),
+  paymentItemId: require("./validate-paymentItemId"),
+  arrCart: require("./validate-arrCartItem"),
 };
 module.exports = validate;
