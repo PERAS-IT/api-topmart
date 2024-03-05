@@ -69,10 +69,10 @@ userRoute.delete(
 userRoute.get("/cart", authenticate, c.cart.getAllItemInCart);
 // user create transaction
 userRoute.post(
-  "/transaction/:productId",
+  "/transaction/:cartItemId",
   authenticate,
   checkPermission(Role.USER),
-  v.productId.validateProductId,
+  v.arrCart.validateArrCart,
   c.transaction.createTransaction
 );
 userRoute.patch(
@@ -97,4 +97,11 @@ userRoute.delete(
   v.transactionId.validateTransactionId,
   c.transaction.deleteTransaction
 );
+userRoute.delete(
+  "/paymentItem/:itemPaymentId",
+  authenticate,
+  v.paymentItemId.validatepaymentItemId,
+  c.itemPayment.deleteItemPayment
+);
+
 module.exports = userRoute;

@@ -1,12 +1,12 @@
 const Joi = require("joi");
 const { CustomError } = require("../../config/error");
 
-const cartItemIdSchema = Joi.object({
-  cartItemId: Joi.number().required().positive(),
+const cartItemSchema = Joi.object({
+  cartItemId: Joi.string().required(),
 });
 
-exports.validateCartItemId = (req, res, next) => {
-  const { value, error } = cartItemIdSchema.validate(req.params);
+exports.validateArrCart = (req, res, next) => {
+  const { error, value } = cartItemSchema.validate(req.params);
   if (error)
     throw new CustomError(
       "invalided pattern of cartItemId",

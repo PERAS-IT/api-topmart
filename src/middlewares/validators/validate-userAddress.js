@@ -26,6 +26,7 @@ const userAddressSchema = Joi.object({
     "string.empty": "province is required",
     "any.required": "province is required",
   }),
+  setDefault: Joi.boolean(),
 });
 
 exports.validateUserAddress = validate(userAddressSchema);
