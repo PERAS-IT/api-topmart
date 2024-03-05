@@ -28,6 +28,16 @@ const storage = multer.diskStorage({
   },
 });
 
+const storageSingle = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/single");
+  },
+  filename: (req, file, cb) => {
+    const fileName = uuidv4() + "." + file.mimetype.split("/")[1];
+    cb(null, fileName);
+  },
+});
+
 const uploadMiddlewareCreateProduct = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
@@ -65,7 +75,20 @@ const uploadMiddlewareCreateProduct = multer({
 ]);
 
 const uploadMiddlewareSingle = multer({
-  storage: storage,
+  storage: storageSingle,
 }).single;
 
-module.exports = { uploadMiddlewareCreateProduct, uploadMiddlewareSingle };
+const uploadMiddlewareLanding = multer({
+  storage: storageSingle,
+}).fields([
+  {
+    name: "image1",
+    maxCount: 5,
+  },
+]);
+
+module.exports = {
+  uploadMiddlewareCreateProduct,
+  uploadMiddlewareSingle,
+  uploadMiddlewareLanding,
+};

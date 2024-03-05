@@ -20,7 +20,7 @@ module.exports.getAllSeries = async (req, res, next) => {
 module.exports.createProductSeries = async (req, res, next) => {
   try {
     const { series } = req.body;
-    const searchSeries = await repo.product.findSeries({ series });
+    const searchSeries = await repo.product.findSeries(series);
     if (searchSeries) {
       throw new CustomError("series name had been used", "WRONG_INPUT", 400);
     }
@@ -37,8 +37,13 @@ module.exports.createProductSeries = async (req, res, next) => {
 module.exports.editProductSeries = async (req, res, next) => {
   try {
     const id = +req.params.seriesId;
-    const data = req.body;
+    const data = req.body.series;
+    const { series } = req.body;
 
+    const searchSeries = await repo.product.findSeries(series);
+    if (searchSeries) {
+      throw new CustomError("series name had been used", "WRONG_INPUT", 400);
+    }
     const result = await repo.product.editProductSeries(id, data);
     res.status(201).json({ result });
   } catch (err) {
@@ -46,8 +51,9 @@ module.exports.editProductSeries = async (req, res, next) => {
     next(err);
   }
 };
+
 //=======================================GROUP=======
-//GET PRODUCT GROUP
+//GET  GROUP
 
 module.exports.getAllGroup = async (req, res, next) => {
   try {
@@ -59,7 +65,7 @@ module.exports.getAllGroup = async (req, res, next) => {
   return;
 };
 
-//CREATE PRODUCT GROUP
+//CREATE GROUP
 module.exports.createProductGroup = async (req, res, next) => {
   try {
     const { categories } = req.body;
@@ -78,7 +84,7 @@ module.exports.createProductGroup = async (req, res, next) => {
   }
 };
 
-//EDIT PRODUCT GROUP
+//EDIT  GROUP
 module.exports.editGroup = async (req, res, next) => {
   try {
     const groupId = +req.params.groupId;
@@ -119,17 +125,17 @@ module.exports.createProduct = async (req, res, next) => {
     let photoProduct = [];
     let photoLinkProduct = [];
 
-    // update table product
+    // // update table product
     const newProduct = await repo.product.createProduct(productData);
 
-    // upload cloudinary
+    // // upload cloudinary
 
-    /***cover*****/
-    const coverLocalPath = req.files.cover.path;
+    // /***cover*****/
+    const coverLocalPath = req.files.coverProduct[0].path;
     const coverPath = await utils.cloudinary.upload(coverLocalPath);
-    await repo.product.createCover(coverPath);
+    await repo.product.createCover(newProduct.id, coverPath);
 
-    /**product */
+    // /**product */
     const productPath = req.files.imageProduct.map(async (image) =>
       utils.cloudinary.upload(image.path)
     );
@@ -145,54 +151,26 @@ module.exports.createProduct = async (req, res, next) => {
     photoProduct = await Promise.all(updateLinkProduct);
 
     // update poster
-    let photoPoster = [];
-    let photoLinkPoster = [];
 
     //upload cloudinary
-    /*poster separate Path */
-    const posterLocalPath1 = req.files.poster1.path;
-    const posterLocalPath2 = req.files.poster2.path;
-    const posterLocalPath3 = req.files.poster3.path;
-    const posterLocalPath4 = req.files.poster4.path;
-    const posterLocalPath5 = req.files.poster5.path;
+    let posterPath = [];
+    for (let i = 1; i <= 5; i++) {
+      posterPath.push(req.files[`poster${i}`][0].path);
+    }
 
-    const posterPath1 = utils.cloudinary(posterLocalPath1);
-    const posterPath2 = utils.cloudinary(posterLocalPath2);
-    const posterPath3 = utils.cloudinary(posterLocalPath3);
-    const posterPath4 = utils.cloudinary(posterLocalPath4);
-    const posterPath5 = utils.cloudinary(posterLocalPath5);
-    await Promise.all([
-      posterPath1,
-      posterPath2,
-      posterPath3,
-      posterPath4,
-      posterPath5,
-    ]);
+    const linkAllPoster = await Promise.all(
+      posterPath.map((path) => utils.cloudinary.upload(path))
+    );
+
     const data = {};
-    data.poster1 = posterPath1;
-    data.poster2 = posterPath2;
-    data.poster3 = posterPath3;
-    data.poster4 = posterPath4;
-    data.poster5 = posterPath5;
+    data.productId = newProduct.id;
+    for (let i = 0; i < linkAllPoster.length; i++) {
+      data[`posters${i + 1}`] = linkAllPoster[i];
+    }
+
     await repo.product.createPoster(data);
 
-    const posterPath = req.files.imagePoster.map(
-      async (image) => await utils.cloudinary.upload(image.path)
-    );
-    photoLinkPoster = await Promise.all(posterPath);
-
-    //upload update Table
-    const updateLinkPoster = photoLinkPoster.map((link) => {
-      const data = {
-        productId: newProduct.id,
-        posters: link,
-      };
-      return repo.product.createImagePoster(data);
-    });
-
-    photoPoster = await Promise.all(updateLinkPoster);
-
-    res.status(201).json({ message: "create success" }); // return ???
+    res.status(201).json({ message: "create success" });
   } catch (err) {
     console.log(err);
     next(err);
@@ -200,11 +178,13 @@ module.exports.createProduct = async (req, res, next) => {
     for (image of req.files.imageProduct) {
       fs.unlink(image.path);
     }
-    for (image of req.files.imagePoster) {
-      fs.unlink(image.path);
+    fs.unlink(req.files.coverProduct[0].path);
+    for (let i = 1; i <= 5; i++) {
+      fs.unlink(req.files[`poster${i}`][0].path);
     }
   }
 };
+
 // EDIT PRODUCT
 module.exports.editProduct = async (req, res, next) => {
   try {
@@ -276,6 +256,54 @@ module.exports.deleteProduct = async (req, res, next) => {
   }
 };
 
+//=======================================Cover=====
+//DELETE COVER BY ID
+module.exports.deleteCover = async (req, res, next) => {
+  try {
+    const coverId = +req.params.coverId;
+    const coverURL = await repo.product.searchCoverByCoverId(coverId);
+
+    let publicId = coverURL.images.split("/")[7].split(".")[0];
+    console.log(publicId);
+    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = repo.product.deleteCover(coverId);
+    await Promise.all([promisesDeleteCloud, promisesDeleteTable]).then(
+      (values) => {
+        console.log(values);
+      }
+    );
+    res.status(200).json({ message: "delete Cover Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+module.exports.updateCover = async (req, res, next) => {
+  try {
+    const coverId = +req.params.coverId;
+    const coverURL = await repo.product.searchCoverByCoverId(coverId);
+
+    let publicId = coverURL.images.split("/")[7].split(".")[0];
+    console.log(publicId);
+    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
+    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
+    const promisesUpdateTable = repo.product.updateCover(
+      coverId,
+      promisesUpdateCloud
+    );
+    await Promise.all([promisesDeleteCloud, promisesUpdateTable]).then(
+      (values) => {
+        console.log(values);
+      }
+    );
+    res.status(200).json({ message: "update Cover Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+//================================IMAGE PRODUCT=====
 // DELETE IMAGE BY IMAGE ID
 module.exports.deleteImage = async (req, res, next) => {
   try {
@@ -284,20 +312,20 @@ module.exports.deleteImage = async (req, res, next) => {
 
     let publicId = imageURL.images.split("/")[7].split(".")[0];
     console.log(publicId);
-    const promisesDeleteCloud = await utils.cloudinary.delete(publicId);
-    const promisesDeleteTable = await repo.product.deleteProductImageById(
-      imageId
+    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = repo.product.deleteProductImageById(imageId);
+    await Promise.all([promisesDeleteCloud, promisesDeleteTable]).then(
+      (values) => {
+        console.log(values);
+      }
     );
-    Promise.all([promisesDeleteCloud, promisesDeleteTable]).then((values) => {
-      console.log(values);
-    });
     res.status(200).json({ message: "deleteImage Success" });
   } catch (err) {
     console.log(err);
     next(err);
   }
 };
-
+//================================POSTER PRODUCT=====
 //DELETE POSTER BY POSTER ID
 module.exports.deletePoster = async (req, res, next) => {
   try {
@@ -319,7 +347,18 @@ module.exports.deletePoster = async (req, res, next) => {
     next(err);
   }
 };
-//GET ALL PRODUCT
+
+//DELETE POSTER BY POSTER1 BY ID
+
+//DELETE POSTER BY POSTER2 BY ID
+
+//DELETE POSTER BY POSTER3 BY ID
+
+//DELETE POSTER BY POSTER4 BY ID
+
+//DELETE POSTER BY POSTER5 BY ID
+
+//GET ALL PRODUCT =====> render Card
 module.exports.getAllProduct = async (req, res, next) => {
   try {
     const resultAllProduct = await repo.product.getAllProduct();
@@ -329,6 +368,7 @@ module.exports.getAllProduct = async (req, res, next) => {
     next(err);
   }
 };
+
 //GET PRODUCT BY ID
 module.exports.getProductById = async (req, res, next) => {
   try {
