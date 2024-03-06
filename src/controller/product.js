@@ -1,4 +1,3 @@
-const { link } = require("joi");
 const { CustomError } = require("../config/error");
 const repo = require("../repository");
 const utils = require("../utils");
@@ -126,6 +125,7 @@ module.exports.createProduct = async (req, res, next) => {
     let photoLinkProduct = [];
 
     // // update table product
+
     const newProduct = await repo.product.createProduct(productData);
 
     // // upload cloudinary
@@ -286,13 +286,13 @@ module.exports.updateCover = async (req, res, next) => {
 
     let publicId = coverURL.images.split("/")[7].split(".")[0];
     console.log(publicId);
-    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
-    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
+    const DeleteCloud = await utils.cloudinary.delete(publicId);
+    const promisesUpdateCloud = utils.cloudinary.upload(req.file.path);
     const promisesUpdateTable = repo.product.updateCover(
       coverId,
       promisesUpdateCloud
     );
-    await Promise.all([promisesDeleteCloud, promisesUpdateTable]).then(
+    await Promise.all([promisesUpdateCloud, promisesUpdateTable]).then(
       (values) => {
         console.log(values);
       }
@@ -301,6 +301,8 @@ module.exports.updateCover = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     next(err);
+  } finally {
+    fs.unlink();
   }
 };
 //================================IMAGE PRODUCT=====
@@ -323,6 +325,23 @@ module.exports.deleteImage = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     next(err);
+  }
+};
+module.exports.createImage = async (req, res, next) => {
+  try {
+    console.log(req.file);
+    const pathURL = await utils.cloudinary.upload(req.file.path);
+    const data = {};
+    data.productId = +req.params.productId;
+    data.images = pathURL;
+    await repo.product.createImageProduct(data);
+
+    res.status(200).json({ message: "crate image Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  } finally {
+    fs.unlink(req.file.path);
   }
 };
 //================================POSTER PRODUCT=====
@@ -348,15 +367,159 @@ module.exports.deletePoster = async (req, res, next) => {
   }
 };
 
-//DELETE POSTER BY POSTER1 BY ID
+//DELETE  POSTER1 BY ID
+module.exports.deletePoster1 = async (req, res, next) => {
+  console.log(req.params);
+  try {
+    const posterId = +req.params.posterId;
+    const posterURL = await repo.product.searchPoster1ByPosterId(posterId);
+    console.log(posterURL);
+    let publicId = posterURL.posters1.split("/")[7].split(".")[0];
 
-//DELETE POSTER BY POSTER2 BY ID
+    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = repo.product.deletePoster1ByProductId(posterId);
+    await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
+    res.status(200).json({ message: "delete poster 1 success" });
+  } catch (err) {
+    console.log(err);
+  }
+};
+//DELETE  POSTER2 BY ID
+module.exports.deletePoster2 = async (req, res, next) => {
+  try {
+    const posterId = +req.params.posterId;
+    const posterURL = await repo.product.searchPoster2ByPosterId(posterId);
+    let publicId = posterURL.posters2.split("/")[7].split(".")[0];
 
-//DELETE POSTER BY POSTER3 BY ID
+    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = repo.product.deletePoster2ByProductId(posterId);
+    await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
+    res.status(200).json({ message: "delete poster 2 success" });
+  } catch (err) {
+    console.log(err);
+  }
+};
+//DELETE  POSTER3 BY ID
+module.exports.deletePoster3 = async (req, res, next) => {
+  try {
+    const posterId = +req.params.posterId;
+    const posterURL = await repo.product.searchPoster3ByPosterId(posterId);
+    let publicId = posterURL.posters3.split("/")[7].split(".")[0];
 
-//DELETE POSTER BY POSTER4 BY ID
+    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = repo.product.deletePoster3ByProductId(posterId);
+    await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
+    res.status(200).json({ message: "delete poster 3 success" });
+  } catch (err) {
+    console.log(err);
+  }
+};
+//DELETE  POSTER4 BY ID
+module.exports.deletePoster4 = async (req, res, next) => {
+  try {
+    const posterId = +req.params.posterId;
+    const posterURL = await repo.product.searchPoster4ByPosterId(posterId);
+    let publicId = posterURL.posters4.split("/")[7].split(".")[0];
 
-//DELETE POSTER BY POSTER5 BY ID
+    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = repo.product.deletePoster4ByProductId(posterId);
+    await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
+    res.status(200).json({ message: "delete poster 4 success" });
+  } catch (err) {
+    console.log(err);
+  }
+};
+//DELETE  POSTER5 BY ID
+module.exports.deletePoster5 = async (req, res, next) => {
+  try {
+    const posterId = +req.params.posterId;
+    const posterURL = await repo.product.searchPoster5ByPosterId(posterId);
+    let publicId = posterURL.posters5.split("/")[7].split(".")[0];
+
+    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = repo.product.deletePoster5ByProductId(posterId);
+    await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
+    res.status(200).json({ message: "delete poster 5 success" });
+  } catch (err) {
+    console.log(err);
+  }
+};
+//UPDATE  POSTER1 BY ID
+module.exports.createPoster1 = async (req, res, next) => {
+  try {
+    const productId = +req.params.productId;
+    console.log(productId);
+    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster1ByProductId(productId, promisesUpdateCloud);
+    res.status(200).json({ message: "update poster1 Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  } finally {
+    fs.unlink(req.file.path);
+  }
+};
+//UPDATE  POSTER2 BY ID
+module.exports.createPoster2 = async (req, res, next) => {
+  try {
+    const productId = +req.params.productId;
+    console.log(productId);
+    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster2ByProductId(productId, promisesUpdateCloud);
+    res.status(200).json({ message: "update poster2 Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  } finally {
+    fs.unlink(req.file.path);
+  }
+};
+//UPDATE  POSTER3 BY ID
+module.exports.createPoster3 = async (req, res, next) => {
+  try {
+    const productId = +req.params.productId;
+    console.log(productId);
+    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster3ByProductId(productId, promisesUpdateCloud);
+    res.status(200).json({ message: "update poster3 Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  } finally {
+    fs.unlink(req.file.path);
+  }
+};
+//UPDATE  POSTER4 BY ID
+module.exports.createPoster4 = async (req, res, next) => {
+  try {
+    const productId = +req.params.productId;
+    console.log(productId);
+    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster4ByProductId(productId, promisesUpdateCloud);
+    res.status(200).json({ message: "update poster4 Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  } finally {
+    fs.unlink(req.file.path);
+  }
+};
+//UPDATE  POSTER5 BY ID
+module.exports.createPoster5 = async (req, res, next) => {
+  console.log(req.file);
+  try {
+    const productId = +req.params.productId;
+    console.log(productId);
+    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster5ByProductId(productId, promisesUpdateCloud);
+    res.status(200).json({ message: "update poster5 Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  } finally {
+    fs.unlink(req.file.path);
+  }
+};
 
 //GET ALL PRODUCT =====> render Card
 module.exports.getAllProduct = async (req, res, next) => {

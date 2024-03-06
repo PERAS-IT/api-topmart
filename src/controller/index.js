@@ -7,5 +7,6 @@ const controller = {
   landing: require("./landing"),
   itemPayment: require("./item-payment"),
   reward: require("./reward"),
+  watchList: require("./watchList"),
 };
 module.exports = controller;

@@ -76,7 +76,7 @@ const uploadMiddlewareCreateProduct = multer({
 
 const uploadMiddlewareSingle = multer({
   storage: storageSingle,
-}).single;
+}).single("image");
 
 const uploadMiddlewareLanding = multer({
   storage: storageSingle,
