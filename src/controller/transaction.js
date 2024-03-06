@@ -65,6 +65,15 @@ module.exports.createTransaction = async (req, res, next) => {
           "WRONG_INPUT",
           400
         );
+      // CHECK reward
+      if (req.body.reward) {
+        const reward = await repo.reward.getReward(req.user.id);
+        if (!reward)
+          throw new CustomError("reward not found", "WRONG_INPUT", 400);
+        const rewardData = reward.point - req.body.reward;
+        await repo.reward.updateReward({ point: rewardData }, req.user.id);
+        delete req.body.reward;
+      }
       // CREATE transaction
       req.body.userId = req.user.id;
       const newTransaction = await prisma.transaction.create({
