@@ -3,7 +3,6 @@ const repo = require("../repository");
 
 exports.expireTransaction = async () => {
   try {
-    console.log("first");
     const threeDayAgo = new Date();
     threeDayAgo.setDate(threeDayAgo.getDate() - 3);
     const expireTransaction = await repo.transaction.findExpireTransaction(

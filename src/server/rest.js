@@ -19,7 +19,7 @@ const transactionRoute = require("../router/transaction");
 const rewardRoute = require("../router/reward");
 const watchListRoute = require("../router/watchList");
 const statusProductRoute = require("../router/status-product");
-const { expireTransaction } = require("../utils/auto-update");
+const { expireTransaction } = require("../service/auto-update-transaction");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
