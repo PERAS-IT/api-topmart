@@ -5,5 +5,6 @@ const controller = {
   cart: require("./cart"),
   transaction: require("./transaction"),
   landing: require("./landing"),
+  watchList: require("./watchList"),
 };
 module.exports = controller;

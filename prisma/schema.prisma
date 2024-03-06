@@ -171,7 +171,7 @@ model WatchList {
 model ProductCover {
   id         Int      @id @default(autoincrement())
   cover      String?
-  productsId Int      @map("product_id")
+  productsId Int      @unique @map("product_id")
   Products   Products @relation(fields: [productsId], references: [id])
 }
 
@@ -191,7 +191,7 @@ model ProductPosters {
   posters3  String?
   posters4  String?
   posters5  String?
-  productId Int      @map("product_id")
+  productId Int      @unique @map("product_id")
   products  Products @relation(fields: [productId], references: [id])
 
   @@map("product_posters")

@@ -14,6 +14,7 @@ const productRoute = require("../router/product");
 const landingRoute = require("../router/landing");
 const adminRoute = require("../router/admin");
 const { scheduleDatabaseUpdate } = require("../utils/cron");
+const watchListRoute = require("../router/watchList");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
@@ -37,6 +38,7 @@ module.exports = function restApiServer(app) {
   app.use("/product", productRoute);
   app.use("/admin", adminRoute);
   app.use("/landing", landingRoute);
+  app.use("/watch", watchListRoute);
 
   scheduleDatabaseUpdate();
   //=====================================================Throwing Zone
