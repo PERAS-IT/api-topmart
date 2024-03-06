@@ -94,7 +94,7 @@ module.exports.createTransaction = async (req, res, next) => {
         const productData = await prisma.products.findFirst({
           where: { id: itemData[i]?.productId },
         });
-        if (productData.stockQuantity < itemData[i].quantity)
+        if (productData.stockQuantity < itemData[i]?.quantity)
           throw new CustomError("not enough of product", "WRONG_INPUT", 400);
       }
       // DELETE cartItem user choose from cart
@@ -106,17 +106,27 @@ module.exports.createTransaction = async (req, res, next) => {
         where: { transactionId: newTransaction.id },
       });
       // UPDATE stockQuantity
-      const productUpdate = itemData.map(
-        async (item) =>
+      const productUpdate = itemData.map(async (item) => {
+        const updatedProduct = await prisma.products.update({
+          where: { id: item.productId },
+          data: {
+            stockQuantity: { decrement: item.quantity },
+          },
+        });
+
+        // Check if stockQuantity is 0, then set isSoldOut to true
+        if (updatedProduct.stockQuantity === 0) {
           await prisma.products.update({
             where: { id: item.productId },
             data: {
-              stockQuantity: { decrement: item.quantity },
-              isSoldOut: { set: true },
+              isSoldOut: true,
             },
-          })
-      );
+          });
+        }
+      });
+
       await Promise.all(productUpdate);
+
       res.status(201).json({ transaction: newTransaction, itemPayment });
     });
   } catch (err) {
@@ -139,12 +149,10 @@ module.exports.updateTransaction = async (req, res, next) => {
       req.body,
       transactionId
     );
-    const itemPayment =
-      await repo.itemPayment.updateAllItemPaymentByTransactioonId(
-        transactionId,
-        "COMPLETE"
-      );
-    console.log(itemPayment);
+    await repo.itemPayment.updateAllItemPaymentByTransactioonId(
+      transactionId,
+      "COMPLETE"
+    );
     res.status(200).json({ transaction: newStatus });
   } catch (err) {
     next(err);

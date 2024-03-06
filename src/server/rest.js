@@ -49,7 +49,7 @@ module.exports = function restApiServer(app) {
   app.use("/watch", watchListRoute);
   app.use("/status_product", statusProductRoute);
 
-  scheduleDatabaseUpdate("*/20 * * * * *", expireTransaction);
+  // scheduleDatabaseUpdate("*/20 * * * * *", expireTransaction);
   //=====================================================Throwing Zone
   app.use(notFound);
   app.use(errorMiddlewares);

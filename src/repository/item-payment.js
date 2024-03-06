@@ -43,4 +43,7 @@ module.exports.getToptenProduct = async (id) =>
 module.exports.getProductById = async (id) =>
   await prisma.products.findFirst({ where: { id } });
 module.exports.updateProductStockByExpireTran = async (id, stockQuantity) =>
-  await prisma.products.updateMany({ where: { id: { in: id } } });
+  await prisma.products.updateMany({
+    where: { id },
+    data: { stockQuantity: { increment: stockQuantity }, isSoldOut: false },
+  });
