@@ -92,9 +92,8 @@ module.exports.createTransaction = async (req, res, next) => {
       // CHECK stockQuantity
       for (i = 0; i < itemId.length; i++) {
         const productData = await prisma.products.findFirst({
-          where: { id: itemId[i]?.productId },
+          where: { id: itemData[i]?.productId },
         });
-        console.log(productData.stockQuantity, itemData[i].quantity);
         if (productData.stockQuantity < itemData[i].quantity)
           throw new CustomError("not enough of product", "WRONG_INPUT", 400);
       }
@@ -129,15 +128,23 @@ module.exports.createTransaction = async (req, res, next) => {
 // USER UPDATE TRANSACTION
 module.exports.updateTransaction = async (req, res, next) => {
   try {
-    const transaction = await repo.transaction.getTransactionByUserId(
+    const transactionId = req.transactionId;
+    const transaction = await repo.transaction.getTransactionPendingByUserId(
       req.user.id
     );
     if (!transaction)
       throw new CustomError("transaction not found", "WRONG_INPUT", 400);
+    req.body.paymentAt = new Date();
     const newStatus = await repo.transaction.updateTransaction(
       req.body,
-      req.user.id
+      transactionId
     );
+    const itemPayment =
+      await repo.itemPayment.updateAllItemPaymentByTransactioonId(
+        transactionId,
+        "COMPLETE"
+      );
+    console.log(itemPayment);
     res.status(200).json({ transaction: newStatus });
   } catch (err) {
     next(err);

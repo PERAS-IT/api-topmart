@@ -1,11 +1,11 @@
 const cron = require("node-cron");
-const { autoUpdate } = require("./auto-update");
+const { expireTransaction } = require("./auto-update");
 
-const scheduleDatabaseUpdate = (setTime) => {
+const scheduleDatabaseUpdate = (setTime, callback) => {
   cron.schedule(
     setTime,
     () => {
-      autoUpdate();
+      callback();
     },
     {
       scheduled: true,

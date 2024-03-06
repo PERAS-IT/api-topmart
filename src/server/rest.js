@@ -18,6 +18,7 @@ const cartRoute = require("../router/cart");
 const transactionRoute = require("../router/transaction");
 const rewardRoute = require("../router/reward");
 const watchListRoute = require("../router/watchList");
+const { expireTransaction } = require("../utils/auto-update");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
@@ -46,7 +47,7 @@ module.exports = function restApiServer(app) {
   app.use("/reward", rewardRoute);
   app.use("/watch", watchListRoute);
 
-  scheduleDatabaseUpdate("0 * * * *");
+  scheduleDatabaseUpdate("*/20 * * * * *", expireTransaction);
   //=====================================================Throwing Zone
   app.use(notFound);
   app.use(errorMiddlewares);

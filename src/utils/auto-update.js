@@ -1,18 +1,28 @@
+const { TransactionStatus } = require("@prisma/client");
 const repo = require("../repository");
 
-exports.autoUpdate = async (req, res, next) => {
+exports.expireTransaction = async () => {
   try {
-    const sevenDayAgo = new Date();
-    sevenDayAgo.setDate(sevenDayAgo.getDate() - 7);
-    const topTenItemPayment = await repo.itemPayment.getToptenItemPayment(
-      sevenDayAgo
+    console.log("first");
+    const threeDayAgo = new Date();
+    threeDayAgo.setDate(threeDayAgo.getDate() - 3);
+    const expireTransaction = await repo.transaction.findExpireTransaction(
+      threeDayAgo
     );
-    let productId = [];
-    for (item of topTenItemPayment) {
-      productId.push(item.productId);
-    }
-    const topTenProduct = await repo.itemPayment.getToptenProduct(productId);
-    res.status(200).json({ topTenProduct });
-    console.log("updating....");
-  } catch (err) {}
+    if (expireTransaction.length === 0) return;
+    await Promise.all(
+      expireTransaction.map(async (transaction) => {
+        return repo.transaction.updateTransaction(
+          { status: TransactionStatus.FAIL },
+          transaction.id
+        );
+      })
+    );
+
+    // await promise.all(expireTransaction.map(async(transaction)=>{
+    //   return repo.itemPayment
+    // })
+  } catch (err) {
+    console.log(err);
+  }
 };

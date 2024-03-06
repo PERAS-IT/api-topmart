@@ -18,6 +18,17 @@ module.exports.createTransaction = async (data) =>
 // อัพเดท transaction
 module.exports.updateTransaction = async (data, id) =>
   await prisma.transaction.update({ where: { id }, data });
+// หา status ที่หมดเวลา
+module.exports.findExpireTransaction = async (threeday) =>
+  await prisma.transaction.findMany({
+    where: { createAt: { gt: threeday }, status: TransactionStatus.PENDING },
+  });
+// ยกเลิก transaction
+module.exports.cancelTransaction = async (id) =>
+  await prisma.transaction.update({
+    where: { id },
+    data: { status: TransactionStatus.FAIL },
+  });
 // ลบ  transaction
 module.exports.deleteTransaction = async (id) =>
   await prisma.transaction.delete({ where: { id } });
