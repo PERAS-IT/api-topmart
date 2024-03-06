@@ -14,6 +14,9 @@ const productRoute = require("../router/product");
 const landingRoute = require("../router/landing");
 const adminRoute = require("../router/admin");
 const { scheduleDatabaseUpdate } = require("../utils/cron");
+const cartRoute = require("../router/cart");
+const transactionRoute = require("../router/transaction");
+const rewardRoute = require("../router/reward");
 const watchListRoute = require("../router/watchList");
 
 //=====================================================Server Zone
@@ -38,9 +41,12 @@ module.exports = function restApiServer(app) {
   app.use("/product", productRoute);
   app.use("/admin", adminRoute);
   app.use("/landing", landingRoute);
+  app.use("/cart", cartRoute);
+  app.use("/transaction", transactionRoute);
+  app.use("/reward", rewardRoute);
   app.use("/watch", watchListRoute);
 
-  scheduleDatabaseUpdate();
+  scheduleDatabaseUpdate("0 * * * *");
   //=====================================================Throwing Zone
   app.use(notFound);
   app.use(errorMiddlewares);

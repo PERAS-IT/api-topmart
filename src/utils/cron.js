@@ -1,9 +1,9 @@
 const cron = require("node-cron");
 const { autoUpdate } = require("./auto-update");
 
-const scheduleDatabaseUpdate = () => {
+const scheduleDatabaseUpdate = (setTime) => {
   cron.schedule(
-    "0 * * * *",
+    setTime,
     () => {
       autoUpdate();
     },
