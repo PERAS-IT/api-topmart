@@ -31,7 +31,7 @@ module.exports.getToptenItemPayment = async (sevenDayAgo) =>
   await prisma.itemPayment.groupBy({
     by: ["productsId"],
     _sum: { totalSale: { _mu1: { price: true, quantity: true } } },
-    where: { transaction: { createAt: { gte: sevenDayAgo } } },
+    where: { transaction: { createdAt: { gte: sevenDayAgo } } },
     orderBy: { _sum: "desc" },
     take: 10,
   });

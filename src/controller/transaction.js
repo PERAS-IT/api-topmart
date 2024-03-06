@@ -144,7 +144,7 @@ module.exports.updateTransaction = async (req, res, next) => {
     );
     if (!transaction)
       throw new CustomError("transaction not found", "WRONG_INPUT", 400);
-    req.body.paymentAt = new Date();
+    req.body.paymentedAt = new Date();
     const newStatus = await repo.transaction.updateTransaction(
       req.body,
       transactionId

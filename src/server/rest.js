@@ -20,6 +20,7 @@ const rewardRoute = require("../router/reward");
 const watchListRoute = require("../router/watchList");
 const statusProductRoute = require("../router/status-product");
 const { expireTransaction } = require("../service/auto-update-transaction");
+const summaryRoute = require("../router/summary");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
@@ -48,6 +49,7 @@ module.exports = function restApiServer(app) {
   app.use("/reward", rewardRoute);
   app.use("/watch", watchListRoute);
   app.use("/status_product", statusProductRoute);
+  app.use("/summary", summaryRoute);
 
   // scheduleDatabaseUpdate("*/20 * * * * *", expireTransaction);
   //=====================================================Throwing Zone
