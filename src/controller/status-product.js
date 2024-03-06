@@ -10,3 +10,14 @@ module.exports.getNewArrivalProduct = async (req, res, next) => {
     next(err);
   }
 };
+
+module.exports.getLaunchCalenderProduct = async (req, res, next) => {
+  try {
+    const resultLaunchProduct =
+      await repo.statusProduct.getLaunchProductSortByDate();
+    res.status(200).json({ resultLaunchProduct });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
