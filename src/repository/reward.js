@@ -6,4 +6,4 @@ module.exports.updateReward = async (data, userId) => {
   await prisma.reward.update({ where: { userId }, data });
 };
 module.exports.getReward = async (userId) =>
-  await prisma.reward.findFirst({ where: userId });
+  await prisma.reward.findFirst({ where: { userId } });
