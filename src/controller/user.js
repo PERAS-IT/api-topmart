@@ -201,9 +201,13 @@ module.exports.subscribeWeb = async (req, res, next) => {
 module.exports.getStatusSubscribe = async (req, res, next) => {
   try {
     const id = req.user.id;
-    const userSub = repo.user.getSubscribe(id);
+    const userSub = await repo.user.getSubscribe(id);
+    console.log(userSub);
     if (!userSub) {
-      const subscribe = repo.user.createSub({ userId: id, isSubscribe: false });
+      const subscribe = await repo.user.createSub({
+        userId: id,
+        isSubscribe: false,
+      });
       return res.status(200).json({ subscribe });
     }
     res.status(200).json({ subscribe: userSub });
