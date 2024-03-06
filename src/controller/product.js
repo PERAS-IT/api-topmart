@@ -558,3 +558,6 @@ module.exports.getProductByIdSeries = async (req, res, next) => {
 
 //GET PRODUCT BY GROUP
 module.exports.getProductByIdGroup = async (req, res, next) => {};
+
+//GET PRODUCT NEW ARRIVAL
+module.exports.getProductNew = async (req, res, next) => {};

@@ -8,5 +8,6 @@ const controller = {
   itemPayment: require("./item-payment"),
   reward: require("./reward"),
   watchList: require("./watchList"),
+  statusProduct: require("./status-product"),
 };
 module.exports = controller;

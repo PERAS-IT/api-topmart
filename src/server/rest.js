@@ -18,6 +18,7 @@ const cartRoute = require("../router/cart");
 const transactionRoute = require("../router/transaction");
 const rewardRoute = require("../router/reward");
 const watchListRoute = require("../router/watchList");
+const statusProductRoute = require("../router/status-product");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
@@ -45,6 +46,7 @@ module.exports = function restApiServer(app) {
   app.use("/transaction", transactionRoute);
   app.use("/reward", rewardRoute);
   app.use("/watch", watchListRoute);
+  app.use("/status_product", statusProductRoute);
 
   scheduleDatabaseUpdate("0 * * * *");
   //=====================================================Throwing Zone

@@ -7,5 +7,6 @@ const repo = {
   landing: require("./landing"),
   reward: require("./reward"),
   watchList: require("./watchList"),
+  statusProduct: require("./status-product"),
 };
 module.exports = repo;
