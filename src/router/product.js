@@ -4,6 +4,7 @@ const { checkPermission } = require("../middlewares/checkPermission");
 const { Role } = require("@prisma/client");
 
 const c = require("../controller");
+const v = require("../middlewares/validators");
 const {
   uploadMiddlewareCreateProduct,
   uploadMiddlewareSingle,
@@ -58,9 +59,11 @@ productRoute.get("/");
 productRoute.post(
   "/create",
   uploadMiddlewareCreateProduct,
+  v.addProduct.validateAddProduct,
   c.product.createProduct
 ); // test
 productRoute.post("/delete/:productId", c.product.deleteProduct); // not open
+productRoute.patch("/inactive/:productId", c.product.deleteSoft);
 
 //=======================================COVER=====
 productRoute.post(
