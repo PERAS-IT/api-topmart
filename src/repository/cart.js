@@ -14,7 +14,7 @@ module.exports.createCart = async (data) => await prisma.cart.create({ data });
 // ดู cartItem ทัั้งหมด ของ user
 module.exports.getAllItemIncartByCartId = async (cartId) =>
   await prisma.cartItems.findMany({
-    where: { cartId, products: { isActive: true } },
+    where: { cartId },
     include: {
       products: {
         select: { productName: true, productCover: true },

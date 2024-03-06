@@ -14,6 +14,15 @@ module.exports.deceaseStock = async (itemPayment) =>
 // หา itemPayment ทั้งหมดจาก transactionId
 module.exports.getAllItemPaymentByTransactionId = async (transactionId) =>
   await prisma.itemPayment.findMany({ where: { transactionId } });
+// อัพเดท itemPayment ทั้งหมด จาก transactionId
+module.exports.updateAllItemPaymentByTransactioonId = async (
+  transactionId,
+  payStatus
+) =>
+  await prisma.itemPayment.updateMany({
+    where: { transactionId },
+    data: { payStatus },
+  });
 // ลบ itemPayment ไม่มีเชื่อมต่อไปหน้าบ้าน
 module.exports.deleteItemPayment = async (id) =>
   await prisma.itemPayment.delete({ where: { id } });
@@ -33,3 +42,5 @@ module.exports.getToptenProduct = async (id) =>
 // หา product by productId
 module.exports.getProductById = async (id) =>
   await prisma.products.findFirst({ where: { id } });
+module.exports.updateProductStockByExpireTran = async (id, stockQuantity) =>
+  await prisma.products.updateMany({ where: { id: { in: id } } });
