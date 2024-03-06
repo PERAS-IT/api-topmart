@@ -173,11 +173,11 @@ module.exports.createProduct = async (req, res, next) => {
 
     const data = {};
     data.productId = newProduct.id;
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 0; i <= 4; i++) {
       if (linkAllPoster[i]) {
-        data[`posters${i}`] = linkAllPoster[i];
+        data[`posters${i + 1}`] = linkAllPoster[i];
       } else {
-        data[`posters${i}`] = null;
+        data[`posters${i + 1}`] = null;
       }
     }
 
