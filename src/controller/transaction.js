@@ -94,6 +94,7 @@ module.exports.createTransaction = async (req, res, next) => {
         const productData = await prisma.products.findFirst({
           where: { id: itemId[i]?.productId },
         });
+        console.log(productData.stockQuantity, itemData[i].quantity);
         if (productData.stockQuantity < itemData[i].quantity)
           throw new CustomError("not enough of product", "WRONG_INPUT", 400);
       }
