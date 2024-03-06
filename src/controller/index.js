@@ -6,5 +6,6 @@ const controller = {
   transaction: require("./transaction"),
   landing: require("./landing"),
   itemPayment: require("./item-payment"),
+  reward: require("./reward"),
 };
 module.exports = controller;

@@ -43,7 +43,6 @@ module.exports.login = async (req, res, next) => {
 module.exports.register = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
     let role = Role.USER;
     const searchUser = await repo.user.getOne(email);
     //Find user by email
@@ -57,8 +56,9 @@ module.exports.register = async (req, res, next) => {
     // DELETE KEY of password from user data
     delete user.password;
     // CREATE empty userProfile
-    console.log(user.id);
     await repo.user.createUserProfile(user.id);
+    // CREATE reward user
+    await repo.reward.createReward({ userId: user.id });
     // SIGN token from user data
     const token = utils.jwt.sign(user);
     const userProfile = await repo.user.getUserProfile(user.id);
@@ -180,7 +180,6 @@ module.exports.subscribeWeb = async (req, res, next) => {
     const id = req.user.id;
     const isSubscribe = req.body.isSubscribe;
     req.body.userId = id;
-    console.log(req.body);
     // CHECK user has ever been sub
     const isSub = await repo.user.getSubscribe(id);
     if (!isSub && isSubscribe) {
@@ -193,6 +192,21 @@ module.exports.subscribeWeb = async (req, res, next) => {
       return res.status(200).json({ message: "subscribe success" });
     // UNSUB
     res.status(200).json({ message: "unSubscribe success" });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+// USER SEE SUB STATUS
+module.exports.getStatusSubscribe = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const userSub = repo.user.getSubscribe(id);
+    if (!userSub) {
+      const subscribe = repo.user.createSub({ userId: id, isSubscribe: false });
+      return res.status(200).json({ subscribe });
+    }
+    res.status(200).json({ subscribe: userSub });
   } catch (err) {
     next(err);
   }

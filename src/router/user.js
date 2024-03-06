@@ -50,45 +50,47 @@ userRoute.patch(
 userRoute.get("/address/all", authenticate, c.user.getAllUserAddress);
 // user subscribe web
 userRoute.patch("/subscribe", authenticate, c.user.subscribeWeb);
-// user add cartItem in cart
-userRoute.patch(
-  "/cart",
-  authenticate,
-  checkPermission(Role.USER),
-  c.cart.updateCart
-);
-// user delete cartItem in cart
-userRoute.delete(
-  "/cart/:cartItemId",
-  authenticate,
-  checkPermission(Role.USER),
-  v.cartItemId.validateCartItemId,
-  c.cart.deleteItemInCart
-);
-// user see all item in cart
-userRoute.get("/cart", authenticate, c.cart.getAllItemInCart);
+// user get subscribe status
+userRoute.get("/subscribe", authenticate, c.user.getStatusSubscribe);
+// // user add cartItem in cart
+// userRoute.patch(
+//   "/cart",
+//   authenticate,
+//   checkPermission(Role.USER),
+//   c.cart.updateCart
+// );
+// // user delete cartItem in cart
+// userRoute.delete(
+//   "/cart/:cartItemId",
+//   authenticate,
+//   checkPermission(Role.USER),
+//   v.cartItemId.validateCartItemId,
+//   c.cart.deleteItemInCart
+// );
+// // user see all item in cart
+// userRoute.get("/cart", authenticate, c.cart.getAllItemInCart);
 // user create transaction
-userRoute.post(
-  "/transaction/:cartItemId",
-  authenticate,
-  checkPermission(Role.USER),
-  v.arrCart.validateArrCart,
-  c.transaction.createTransaction
-);
-// update transaction user
-userRoute.patch(
-  "/transaction/:transactionId",
-  authenticate,
-  checkPermission(Role.USER),
-  v.transactionId.validateTransactionId,
-  c.transaction.updateTransaction
-);
-// user see transaction
-userRoute.get(
-  "/transaction",
-  authenticate,
-  c.transaction.getTransactionByUserId
-);
+// userRoute.post(
+//   "/transaction/:cartItemId",
+//   authenticate,
+//   checkPermission(Role.USER),
+//   v.arrCart.validateArrCart,
+//   c.transaction.createTransaction
+// );
+// // update transaction user
+// userRoute.patch(
+//   "/transaction/:transactionId",
+//   authenticate,
+//   checkPermission(Role.USER),
+//   v.transactionId.validateTransactionId,
+//   c.transaction.updateTransaction
+// );
+// // user see transaction
+// userRoute.get(
+//   "/transaction",
+//   authenticate,
+//   c.transaction.getTransactionByUserId
+// );
 
 // delete user for backend
 userRoute.delete(

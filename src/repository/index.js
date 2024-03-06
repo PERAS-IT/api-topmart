@@ -5,5 +5,6 @@ const repo = {
   transaction: require("./transaction"),
   itemPayment: require("./item-payment"),
   landing: require("./landing"),
+  reward: require("./reward"),
 };
 module.exports = repo;
