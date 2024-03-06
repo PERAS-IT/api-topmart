@@ -1,4 +1,7 @@
 const express = require("express");
+const authenticate = require("../middlewares/authenticate");
+const { checkPermission } = require("../middlewares/checkPermission");
+const { Role } = require("@prisma/client");
 
 const c = require("../controller");
 const {
@@ -10,13 +13,43 @@ const {
 const productRoute = express.Router();
 
 //=======================================SERIES======
-productRoute.get("/series", c.product.getAllSeries);
-productRoute.post("/series/create", c.product.createProductSeries);
-productRoute.patch("/series/:seriesId", c.product.editProductSeries);
+productRoute.get(
+  "/series",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.getAllSeries
+);
+productRoute.post(
+  "/series/create",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.createProductSeries
+);
+productRoute.patch(
+  "/series/:seriesId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.editProductSeries
+);
 //=======================================GROUP=======
-productRoute.get("/group", c.product.getAllGroup);
-productRoute.post("/group/create", c.product.createProductGroup);
-productRoute.patch("/group/:groupId", c.product.editGroup);
+productRoute.get(
+  "/group",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.getAllGroup
+);
+productRoute.post(
+  "/group/create",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.createProductGroup
+);
+productRoute.patch(
+  "/group/:groupId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.editGroup
+);
 
 //=======================================PRODUCT=====
 productRoute.get("/", c.product.getAllProduct); // for get card
@@ -76,5 +109,7 @@ productRoute.patch("/delete_poster2/:posterId", c.product.deletePoster2);
 productRoute.patch("/delete_poster3/:posterId", c.product.deletePoster3);
 productRoute.patch("/delete_poster4/:posterId", c.product.deletePoster4);
 productRoute.patch("/delete_poster5/:posterId", c.product.deletePoster5);
+
+//========================================NEW ARRIVAL====
 
 module.exports = productRoute;
