@@ -114,7 +114,7 @@ productRoute.post(
   "/update_image/:imageId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
-  c.product.deleteImage
+  c.product.updateImage
 );
 
 //========================================POSTER====
