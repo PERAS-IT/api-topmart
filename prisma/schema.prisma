@@ -244,9 +244,9 @@ model Transaction {
   createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamp(0)
   paymentedAt  DateTime?         @map("paymented_at") @db.Timestamp(0)
   totalAmount  Decimal           @map("total_amount") @db.Decimal(10, 2)
-  discount     Decimal           @db.Decimal(10, 2)
+  discount     Decimal           @default(0) @db.Decimal(10, 2)
   status       TransactionStatus @default(PENDING)
-  itempayments ItemPayment[]
+  itemPayments ItemPayment[]
 
   @@map("transactions")
 }
