@@ -88,6 +88,11 @@ module.exports.editProduct = async (id, data) =>
     },
     data,
   });
+module.exports.updateQuantity = async (id, quantity) =>
+  await prisma.products.update({
+    where: { id },
+    data: { stockQuantity: quantity },
+  });
 module.exports.getAllProduct = async () =>
   await prisma.products.findMany({
     include: {

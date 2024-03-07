@@ -49,6 +49,7 @@ module.exports = function restApiServer(app) {
   app.use("/reward", rewardRoute);
   app.use("/watch", watchListRoute);
   app.use("/status_product", statusProductRoute);
+  app.use("/liveChat");
 
   // scheduleDatabaseUpdate("*/20 * * * * *", expireTransaction);
   // scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
