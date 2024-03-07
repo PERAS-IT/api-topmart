@@ -344,14 +344,14 @@ module.exports.updateImage = async (req, res, next) => {
     if (!req.file) {
       throw new CustomError("input file cover image", WRONG_INPUT, 400);
     }
-    const imageId = +req.params.coverId;
+    const imageId = +req.params.imageId;
     const imageURL = await repo.product.searchImageByImageId(imageId);
 
     let publicId = imageURL.images.split("/")[7].split(".")[0];
     console.log(publicId);
     await utils.cloudinary.delete(publicId);
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    const promisesUpdateTable = repo.product.updateCover(
+    const promisesUpdateTable = repo.product.updateImageProduct(
       imageId,
       promisesUpdateCloud
     );

@@ -151,10 +151,16 @@ module.exports.searchCoverByCoverId = async (id) =>
 exports.createImageProduct = async (data) =>
   await prisma.productImages.create({ data });
 
-exports.updateImageProduct = async (id) =>
-  await prisma.productImages.update({ where: { id: id } });
+exports.updateImageProduct = async (id, image) =>
+  await prisma.productImages.update({
+    where: { id: id },
+    data: {
+      images: image,
+    },
+  });
 exports.deleteProductImageById = async (id) =>
   await prisma.productImages.delete({ where: { id: id } });
+
 exports.deleteImageByProductId = async (productId) =>
   await prisma.productImages.deleteMany({ where: { productId: productId } });
 exports.searchImagesByProductId = async (productId) =>

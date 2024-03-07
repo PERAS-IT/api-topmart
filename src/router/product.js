@@ -57,13 +57,7 @@ productRoute.post(
   v.addProduct.validateAddProduct,
   c.product.createProduct
 ); // test
-// HEARD DELETE PRODUCT
-productRoute.post(
-  "/delete/:productId",
-  authenticate,
-  checkPermission(Role.SUPERADMIN),
-  c.product.deleteProduct
-); // not open
+
 // SOFT DELETE PRODUCT
 productRoute.patch(
   "/inactive/:productId",
@@ -112,6 +106,12 @@ productRoute.post(
 );
 productRoute.post(
   "/delete_image/:imageId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.deleteImage
+);
+productRoute.post(
+  "/update_image/:imageId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.deleteImage
