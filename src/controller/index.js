@@ -9,6 +9,7 @@ const controller = {
   reward: require("./reward"),
   watchList: require("./watchList"),
   statusProduct: require("./status-product"),
+  summary: require("./summary"),
   liveChat: require("./live-chat"),
 };
 module.exports = controller;
