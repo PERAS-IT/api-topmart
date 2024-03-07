@@ -122,7 +122,7 @@ module.exports.deleteProduct = async (id) =>
 //cover image
 
 module.exports.deleteCover = async (id) =>
-  await prisma.productCover.delete({ where: { id } });
+  await prisma.productCover.update({ where: { id }, data: { cover: null } });
 module.exports.createCover = async (productsId, cover) =>
   await prisma.productCover.create({
     data: {

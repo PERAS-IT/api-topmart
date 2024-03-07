@@ -14,12 +14,7 @@ const {
 const productRoute = express.Router();
 
 //=======================================SERIES======
-productRoute.get(
-  "/series",
-  authenticate,
-  checkPermission(Role.ADMIN, Role.SUPERADMIN),
-  c.product.getAllSeries
-);
+productRoute.get("/series", c.product.getAllSeries);
 productRoute.post(
   "/series/create",
   authenticate,
@@ -33,12 +28,7 @@ productRoute.patch(
   c.product.editProductSeries
 );
 //=======================================GROUP=======
-productRoute.get(
-  "/group",
-  authenticate,
-  checkPermission(Role.ADMIN, Role.SUPERADMIN),
-  c.product.getAllGroup
-);
+productRoute.get("/group", c.product.getAllGroup);
 productRoute.post(
   "/group/create",
   authenticate,
@@ -55,63 +45,130 @@ productRoute.patch(
 //=======================================PRODUCT=====
 productRoute.get("/", c.product.getAllProduct); // for get card
 productRoute.get("/:productId", c.product.getProductById); // for get product
-productRoute.get("/");
 productRoute.post(
   "/create",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareCreateProduct,
   v.addProduct.validateAddProduct,
   c.product.createProduct
 ); // test
-productRoute.post("/delete/:productId", c.product.deleteProduct); // not open
-productRoute.patch("/inactive/:productId", c.product.deleteSoft);
+
+productRoute.post(
+  "/delete/:productId",
+  authenticate,
+  checkPermission(Role.SUPERADMIN),
+  c.product.deleteProduct
+); // not open
+productRoute.patch(
+  "/inactive/:productId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.deleteSoft
+);
+productRoute.patch(
+  "/update/:productId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.editProduct
+);
 
 //=======================================COVER=====
 productRoute.post(
   "/update_cover/:coverId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.updateCover
 );
-productRoute.post("/delete_cover/:coverId", c.product.deleteCover);
+productRoute.post(
+  "/delete_cover/:coverId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.deleteCover
+);
 //=======================================IMAGE=====
 productRoute.post(
   "/upload_image/:productId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createImage
 );
-productRoute.post("/delete_image/:imageId", c.product.deleteImage);
+productRoute.post(
+  "/delete_image/:imageId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.deleteImage
+);
 
 //========================================POSTER====
 productRoute.patch(
   "/upload_poster1/:productId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createPoster1
 );
 productRoute.patch(
   "/upload_poster2/:productId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createPoster2
 );
 productRoute.patch(
   "/upload_poster3/:productId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createPoster3
 );
 productRoute.patch(
   "/upload_poster4/:productId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createPoster4
 );
 productRoute.patch(
   "/upload_poster5/:productId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createPoster5
 );
 
-productRoute.patch("/delete_poster1/:posterId", c.product.deletePoster1);
-productRoute.patch("/delete_poster2/:posterId", c.product.deletePoster2);
-productRoute.patch("/delete_poster3/:posterId", c.product.deletePoster3);
-productRoute.patch("/delete_poster4/:posterId", c.product.deletePoster4);
-productRoute.patch("/delete_poster5/:posterId", c.product.deletePoster5);
+productRoute.patch(
+  "/delete_poster1/:posterId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.deletePoster1
+);
+productRoute.patch(
+  "/delete_poster2/:posterId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.deletePoster2
+);
+productRoute.patch(
+  "/delete_poster3/:posterId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.deletePoster3
+);
+productRoute.patch(
+  "/delete_poster4/:posterId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.deletePoster4
+);
+productRoute.patch(
+  "/delete_poster5/:posterId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.deletePoster5
+);
 
 //========================================NEW ARRIVAL====
 

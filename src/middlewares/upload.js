@@ -82,7 +82,7 @@ const uploadMiddlewareLanding = multer({
   storage: storageSingle,
 }).fields([
   {
-    name: "image1",
+    name: "image",
     maxCount: 5,
   },
 ]);

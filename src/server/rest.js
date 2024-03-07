@@ -51,7 +51,7 @@ module.exports = function restApiServer(app) {
   app.use("/status_product", statusProductRoute);
 
   // scheduleDatabaseUpdate("*/20 * * * * *", expireTransaction);
-  // scheduleDatabaseUpdate("*/2 * * * * *", updateStatusProduct);
+  // scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
   //=====================================================Throwing Zone
   app.use(notFound);
   app.use(errorMiddlewares);
