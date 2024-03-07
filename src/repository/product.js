@@ -122,7 +122,7 @@ module.exports.deleteProduct = async (id) =>
 //cover image
 
 module.exports.deleteCover = async (id) =>
-  await prisma.productCover.delete({ where: { id } });
+  await prisma.productCover.update({ where: { id }, data: { cover: null } });
 module.exports.createCover = async (productsId, cover) =>
   await prisma.productCover.create({
     data: {
@@ -264,30 +264,4 @@ exports.searchPoster5ByPosterId = async (id) =>
   await prisma.productPosters.findFirst({
     where: { id },
     select: { posters5: true },
-  });
-
-//=======================================UPDATE STATUS=====
-exports.searchProductBySevenDayAgo = async () => {
-  const currentDate = new Date();
-  const dateSevenDayAgo = currentDate.getTime() - 7 * 24 * 60 * 60 * 1000;
-  return await prisma.products.findMany({
-    where: {
-      launchDate: {
-        lt: dateSevenDayAgo,
-      },
-    },
-    select: { id: true },
-  });
-};
-
-exports.updateProductToNotNewProduct = async (arrayListIdUpdate) =>
-  await prisma.products.updateMany({
-    where: {
-      id: {
-        in: arrayListIdUpdate,
-      },
-    },
-    data: {
-      isNew: false,
-    },
   });

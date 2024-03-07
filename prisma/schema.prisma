@@ -173,6 +173,8 @@ model ProductCover {
   cover      String?
   productsId Int      @unique @map("product_id")
   Products   Products @relation(fields: [productsId], references: [id])
+
+  @@map("product_cover")
 }
 
 model ProductImages {

@@ -1,7 +1,7 @@
 const { CustomError } = require("../config/error");
 const repo = require("../repository");
 
-// get watch list by user Id
+// GET WATCH LIST
 module.exports.getWatchList = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -13,7 +13,7 @@ module.exports.getWatchList = async (req, res, next) => {
   }
 };
 
-// create watch list by user Id and productId
+// CREATE WATCH LIST
 
 module.exports.createWatchList = async (req, res, next) => {
   try {
@@ -31,6 +31,7 @@ module.exports.createWatchList = async (req, res, next) => {
   }
 };
 
+// DELETE  WATCH LIST
 module.exports.deleteWatchList = async (req, res, next) => {
   console.log("this");
   try {

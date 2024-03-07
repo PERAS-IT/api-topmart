@@ -114,12 +114,11 @@ module.exports.createProduct = async (req, res, next) => {
       throw new CustomError("name has been exist", "WRONG_INPUT", 400);
     }
     const productData = req.body;
-    // for post man
     productData.serieId = +req.body.serieId;
     productData.groupId = +req.body.groupId;
     productData.price = +req.body.price;
     productData.stockQuantity = +req.body.stockQuantity;
-    productData.launchDate = new Date(); // select date from front
+    productData.launchDate = new Date(req.body.launchDate); // select date from front
 
     let photoProduct = [];
     let photoLinkProduct = [];
@@ -131,41 +130,55 @@ module.exports.createProduct = async (req, res, next) => {
     // // upload cloudinary
 
     // /***cover*****/
-    const coverLocalPath = req.files.coverProduct[0].path;
-    const coverPath = await utils.cloudinary.upload(coverLocalPath);
-    await repo.product.createCover(newProduct.id, coverPath);
+    if (req.files.coverProduct) {
+      const coverLocalPath = req.files.coverProduct[0].path;
+      const coverPath = await utils.cloudinary.upload(coverLocalPath);
+      await repo.product.createCover(newProduct.id, coverPath);
+    }
 
     // /**product */
-    const productPath = req.files.imageProduct.map(async (image) =>
-      utils.cloudinary.upload(image.path)
-    );
-    photoLinkProduct = await Promise.all(productPath);
-    // update link on table product image
-    const updateLinkProduct = photoLinkProduct.map((link) => {
-      const data = {
-        productId: newProduct.id,
-        images: link,
-      };
-      return repo.product.createImageProduct(data);
-    });
-    photoProduct = await Promise.all(updateLinkProduct);
+    if (req.files.imageProduct) {
+      const productPath = req.files.imageProduct.map(async (image) =>
+        utils.cloudinary.upload(image.path)
+      );
+      photoLinkProduct = await Promise.all(productPath);
+      // update link on table product image
+      const updateLinkProduct = photoLinkProduct.map((link) => {
+        const data = {
+          productId: newProduct.id,
+          images: link,
+        };
+        return repo.product.createImageProduct(data);
+      });
+      photoProduct = await Promise.all(updateLinkProduct);
+    }
 
     // update poster
 
     //upload cloudinary
     let posterPath = [];
     for (let i = 1; i <= 5; i++) {
-      posterPath.push(req.files[`poster${i}`][0].path);
+      if (req.files[`poster${i}`]) {
+        posterPath.push(req.files[`poster${i}`][0].path);
+      } else {
+        posterPath.push(null);
+      }
     }
 
     const linkAllPoster = await Promise.all(
-      posterPath.map((path) => utils.cloudinary.upload(path))
+      posterPath.map((path) =>
+        path === null ? null : utils.cloudinary.upload(path)
+      )
     );
 
     const data = {};
     data.productId = newProduct.id;
-    for (let i = 0; i < linkAllPoster.length; i++) {
-      data[`posters${i + 1}`] = linkAllPoster[i];
+    for (let i = 0; i <= 4; i++) {
+      if (linkAllPoster[i]) {
+        data[`posters${i + 1}`] = linkAllPoster[i];
+      } else {
+        data[`posters${i + 1}`] = null;
+      }
     }
 
     await repo.product.createPoster(data);
@@ -175,12 +188,18 @@ module.exports.createProduct = async (req, res, next) => {
     console.log(err);
     next(err);
   } finally {
-    for (image of req.files.imageProduct) {
-      fs.unlink(image.path);
+    if (req.files.imageProduct) {
+      for (image of req.files.imageProduct) {
+        fs.unlink(image.path);
+      }
     }
-    fs.unlink(req.files.coverProduct[0].path);
+    if (req.files.coverProduct) {
+      fs.unlink(req.files.coverProduct[0].path);
+    }
     for (let i = 1; i <= 5; i++) {
-      fs.unlink(req.files[`poster${i}`][0].path);
+      if (req.files[`poster${i}`]) {
+        fs.unlink(req.files[`poster${i}`][0]?.path);
+      }
     }
   }
 };
@@ -188,7 +207,7 @@ module.exports.createProduct = async (req, res, next) => {
 // EDIT PRODUCT
 module.exports.editProduct = async (req, res, next) => {
   try {
-    const prodId = +req.params;
+    const productId = +req.params.productId;
     const { productName } = req.body;
     const searchNameDuplicate = await repo.product.findProductDuplicate(
       productName
@@ -196,6 +215,7 @@ module.exports.editProduct = async (req, res, next) => {
     if (searchNameDuplicate.length > 1) {
       throw new CustomError("Product name is duplicate", "WRONG_INPUT", 400);
     }
+
     const data = req.body;
     const updateResult = await repo.product.editProduct(prodId, data);
     res.status(200).json({ updateResult });
@@ -255,6 +275,17 @@ module.exports.deleteProduct = async (req, res, next) => {
     next(err);
   }
 };
+// SOFT DELETE
+module.exports.deleteSoft = async (req, res, next) => {
+  try {
+    const productId = +req.params.productId;
+    await repo.product.deleteProductSoft(productId);
+    res.status(200).json({ message: "inactive product success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
 
 //=======================================Cover=====
 //DELETE COVER BY ID
@@ -278,9 +309,12 @@ module.exports.deleteCover = async (req, res, next) => {
     next(err);
   }
 };
-
+//UPDATE COVER
 module.exports.updateCover = async (req, res, next) => {
   try {
+    if (!req.file) {
+      throw new CustomError("input file cover image", WRONG_INPUT, 400);
+    }
     const coverId = +req.params.coverId;
     const coverURL = await repo.product.searchCoverByCoverId(coverId);
 
@@ -329,7 +363,9 @@ module.exports.deleteImage = async (req, res, next) => {
 };
 module.exports.createImage = async (req, res, next) => {
   try {
-    console.log(req.file);
+    if (!req.file) {
+      throw new CustomError("input file image", WRONG_INPUT, 400);
+    }
     const pathURL = await utils.cloudinary.upload(req.file.path);
     const data = {};
     data.productId = +req.params.productId;
@@ -342,6 +378,35 @@ module.exports.createImage = async (req, res, next) => {
     next(err);
   } finally {
     fs.unlink(req.file.path);
+  }
+};
+module.exports.updateImage = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      throw new CustomError("input file cover image", WRONG_INPUT, 400);
+    }
+    const imageId = +req.params.coverId;
+    const imageURL = await repo.product.searchImageByImageId(imageId);
+
+    let publicId = imageURL.images.split("/")[7].split(".")[0];
+    console.log(publicId);
+    const DeleteCloud = await utils.cloudinary.delete(publicId);
+    const promisesUpdateCloud = utils.cloudinary.upload(req.file.path);
+    const promisesUpdateTable = repo.product.updateCover(
+      imageId,
+      promisesUpdateCloud
+    );
+    await Promise.all([promisesUpdateCloud, promisesUpdateTable]).then(
+      (values) => {
+        console.log(values);
+      }
+    );
+    res.status(200).json({ message: "update image Success" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  } finally {
+    fs.unlink();
   }
 };
 //================================POSTER PRODUCT=====
@@ -382,6 +447,7 @@ module.exports.deletePoster1 = async (req, res, next) => {
     res.status(200).json({ message: "delete poster 1 success" });
   } catch (err) {
     console.log(err);
+    next(err);
   }
 };
 //DELETE  POSTER2 BY ID
@@ -397,6 +463,7 @@ module.exports.deletePoster2 = async (req, res, next) => {
     res.status(200).json({ message: "delete poster 2 success" });
   } catch (err) {
     console.log(err);
+    next(err);
   }
 };
 //DELETE  POSTER3 BY ID
@@ -447,6 +514,9 @@ module.exports.deletePoster5 = async (req, res, next) => {
 //UPDATE  POSTER1 BY ID
 module.exports.createPoster1 = async (req, res, next) => {
   try {
+    if (!req.file) {
+      throw new CustomError("input file image", WRONG_INPUT, 400);
+    }
     const productId = +req.params.productId;
     console.log(productId);
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
@@ -462,6 +532,9 @@ module.exports.createPoster1 = async (req, res, next) => {
 //UPDATE  POSTER2 BY ID
 module.exports.createPoster2 = async (req, res, next) => {
   try {
+    if (!req.file) {
+      throw new CustomError("input file image", WRONG_INPUT, 400);
+    }
     const productId = +req.params.productId;
     console.log(productId);
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
@@ -477,6 +550,9 @@ module.exports.createPoster2 = async (req, res, next) => {
 //UPDATE  POSTER3 BY ID
 module.exports.createPoster3 = async (req, res, next) => {
   try {
+    if (!req.file) {
+      throw new CustomError("input file image", WRONG_INPUT, 400);
+    }
     const productId = +req.params.productId;
     console.log(productId);
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
@@ -492,6 +568,9 @@ module.exports.createPoster3 = async (req, res, next) => {
 //UPDATE  POSTER4 BY ID
 module.exports.createPoster4 = async (req, res, next) => {
   try {
+    if (!req.file) {
+      throw new CustomError("input file image", WRONG_INPUT, 400);
+    }
     const productId = +req.params.productId;
     console.log(productId);
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
@@ -506,8 +585,10 @@ module.exports.createPoster4 = async (req, res, next) => {
 };
 //UPDATE  POSTER5 BY ID
 module.exports.createPoster5 = async (req, res, next) => {
-  console.log(req.file);
   try {
+    if (!req.file) {
+      throw new CustomError("input file image", WRONG_INPUT, 400);
+    }
     const productId = +req.params.productId;
     console.log(productId);
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
@@ -555,9 +636,3 @@ module.exports.getProductByIdSeries = async (req, res, next) => {
     next(err);
   }
 };
-
-//GET PRODUCT BY GROUP
-module.exports.getProductByIdGroup = async (req, res, next) => {};
-
-//GET PRODUCT NEW ARRIVAL
-module.exports.getProductNew = async (req, res, next) => {};
