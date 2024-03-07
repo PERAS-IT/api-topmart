@@ -270,3 +270,5 @@ exports.searchPoster5ByPosterId = async (id) =>
     where: { id },
     select: { posters5: true },
   });
+
+//========================================NEW ARRIVAL====

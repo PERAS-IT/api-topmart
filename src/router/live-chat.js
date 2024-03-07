@@ -1,5 +1,6 @@
 const express = require("express");
 
-const messageRoute = express.Router();
+const liveChatRoute = express.Router();
 
-module.exports = messageRoute;
+liveChatRoute.post("/send/:id");
+module.exports = liveChatRoute;

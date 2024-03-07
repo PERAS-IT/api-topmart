@@ -439,7 +439,6 @@ module.exports.deletePoster = async (req, res, next) => {
 
 //DELETE  POSTER1 BY ID
 module.exports.deletePoster1 = async (req, res, next) => {
-  console.log(req.params);
   try {
     const posterId = +req.params.posterId;
     const posterURL = await repo.product.searchPoster1ByPosterId(posterId);
