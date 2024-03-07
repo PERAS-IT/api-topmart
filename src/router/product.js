@@ -43,8 +43,12 @@ productRoute.patch(
 );
 
 //=======================================PRODUCT=====
+//get All
 productRoute.get("/", c.product.getAllProduct); // for get card
+//GET BY ID
 productRoute.get("/:productId", c.product.getProductById); // for get product
+
+//CREATE PRODUCT
 productRoute.post(
   "/create",
   authenticate,
@@ -53,24 +57,35 @@ productRoute.post(
   v.addProduct.validateAddProduct,
   c.product.createProduct
 ); // test
-
+// HEARD DELETE PRODUCT
 productRoute.post(
   "/delete/:productId",
   authenticate,
   checkPermission(Role.SUPERADMIN),
   c.product.deleteProduct
 ); // not open
+// SOFT DELETE PRODUCT
 productRoute.patch(
   "/inactive/:productId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.deleteSoft
 );
+// UPDATE PRODUCT
 productRoute.patch(
   "/update/:productId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  v.addProduct.validateAddProduct,
   c.product.editProduct
+);
+
+// UPDATE QUANTITY
+productRoute.patch(
+  "/update_quantity/:productId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.updateQuantity
 );
 
 //=======================================COVER=====
@@ -169,7 +184,5 @@ productRoute.patch(
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.deletePoster5
 );
-
-//========================================NEW ARRIVAL====
 
 module.exports = productRoute;

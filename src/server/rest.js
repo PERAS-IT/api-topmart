@@ -51,6 +51,7 @@ module.exports = function restApiServer(app) {
   app.use("/watch", watchListRoute);
   app.use("/status_product", statusProductRoute);
   app.use("/summary", summaryRoute);
+  app.use("/liveChat");
 
   // // scheduleDatabaseUpdate("*/2 * * * * *", expireTransaction);
   // scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
