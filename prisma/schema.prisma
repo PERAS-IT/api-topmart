@@ -23,10 +23,9 @@ model User {
   userAddresses UserAddress[]
   reward        Reward?
   userProfile   UserProfile?
-  senders       LiveChat[]     @relation("sender")
-  receivers     LiveChat[]     @relation("receiver")
+  liveChat      LiveChat[]
   watchLists    WatchList[]
-  carts         Cart[]
+  carts         Cart?
   transactions  Transaction[]
 
   @@map("users")
@@ -94,13 +93,11 @@ enum Gender {
 }
 
 model LiveChat {
-  id         Int      @id @default(autoincrement())
-  message    String
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(0)
-  sender     User     @relation(name: "sender", fields: [senderId], references: [id])
-  senderId   Int      @map("sender_id")
-  receive    User     @relation(name: "receiver", fields: [receiverId], references: [id])
-  receiverId Int      @map("receiver_id")
+  id        Int      @id @default(autoincrement())
+  message   String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
 
   @@map("live_chats")
 }
@@ -201,7 +198,7 @@ model ProductPosters {
 
 model Cart {
   id        Int         @id @default(autoincrement())
-  userId    Int         @map("user_id")
+  userId    Int         @unique @map("user_id")
   user      User        @relation(fields: [userId], references: [id])
   cartItems CartItems[]
 

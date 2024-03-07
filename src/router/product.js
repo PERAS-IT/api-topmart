@@ -119,35 +119,35 @@ productRoute.post(
 
 //========================================POSTER====
 productRoute.patch(
-  "/upload_poster1/:productId",
+  "/upload_poster1/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createPoster1
 );
 productRoute.patch(
-  "/upload_poster2/:productId",
+  "/upload_poster2/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createPoster2
 );
 productRoute.patch(
-  "/upload_poster3/:productId",
+  "/upload_poster3/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createPoster3
 );
 productRoute.patch(
-  "/upload_poster4/:productId",
+  "/upload_poster4/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
   c.product.createPoster4
 );
 productRoute.patch(
-  "/upload_poster5/:productId",
+  "/upload_poster5/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,

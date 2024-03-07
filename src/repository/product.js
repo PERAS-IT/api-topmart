@@ -1,4 +1,3 @@
-const { date } = require("joi");
 const prisma = require("../config/prisma");
 
 //=======================================SERIES======
@@ -172,73 +171,73 @@ exports.createPoster = async (data) =>
   await prisma.productPosters.create({ data });
 exports.searchPosterByProductId = async (productId) =>
   await prisma.productPosters.findMany({ where: { productId } });
-exports.updatePoster1ByProductId = async (productId, newPoster) =>
+exports.updatePoster1ByPostId = async (id, newPoster) =>
   await prisma.productPosters.update({
     where: {
-      productId,
+      id,
     },
     data: {
       posters1: newPoster,
     },
   });
-exports.updatePoster2ByProductId = async (productId, newPoster) =>
+exports.updatePoster2ByPostId = async (id, newPoster) =>
   await prisma.productPosters.update({
     where: {
-      productId,
+      id,
     },
     data: {
       posters2: newPoster,
     },
   });
-exports.updatePoster3ByProductId = async (productId, newPoster) =>
+exports.updatePoster3ByPostId = async (id, newPoster) =>
   await prisma.productPosters.update({
     where: {
-      productId,
+      id,
     },
     data: {
       posters3: newPoster,
     },
   });
-exports.updatePoster4ByProductId = async (productId, newPoster) =>
+exports.updatePoster4ByPostId = async (id, newPoster) =>
   await prisma.productPosters.update({
     where: {
-      productId,
+      id,
     },
     data: {
       posters4: newPoster,
     },
   });
-exports.updatePoster5ByProductId = async (productId, newPoster) =>
+exports.updatePoster5ByPostId = async (id, newPoster) =>
   await prisma.productPosters.update({
     where: {
-      productId,
+      id,
     },
     data: {
       posters5: newPoster,
     },
   });
 
-exports.deletePoster1ByProductId = async (id) =>
+exports.deletePoster1ByPosterId = async (id) =>
   await prisma.productPosters.update({
     where: { id },
     data: { posters1: null },
   });
-exports.deletePoster2ByProductId = async (id) =>
+exports.deletePoster2ByPosterId = async (id) =>
   await prisma.productPosters.update({
     where: { id },
     data: { posters2: null },
   });
-exports.deletePoster3ByProductId = async (id) =>
+exports.deletePoster3ByPosterId = async (id) =>
   await prisma.productPosters.update({
     where: { id },
     data: { posters3: null },
   });
-exports.deletePoster4ByProductId = async (id) =>
+exports.deletePoster4ByPosterId = async (id) =>
   await prisma.productPosters.update({
     where: { id },
     data: { posters4: null },
   });
-exports.deletePoster5ByProductId = async (id) =>
+exports.deletePoster5ByPosterId = async (id) =>
   await prisma.productPosters.update({
     where: { id },
     data: { posters5: null },

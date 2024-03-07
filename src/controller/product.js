@@ -240,57 +240,6 @@ module.exports.updateQuantity = async (req, res, next) => {
     next(err);
   }
 };
-// DELETE PRODUCT
-module.exports.deleteProduct = async (req, res, next) => {
-  try {
-    const productId = +req.params.productId;
-    await repo.product.deleteProductSoft(productId);
-    // delete image
-    const resultSearch = await repo.product.searchImagesByProductId(productId);
-    // delete on cloudinary
-    if (resultSearch.length > 1) {
-      const promisesDeleteCloud = resultSearch.map(async (imageURL) => {
-        let publicId = imageURL.images.split("/")[7].split(".")[0];
-        await utils.cloudinary.delete(publicId);
-        // delete on table
-        const promisesDeleteTable = await repo.product.deleteImageByProductId(
-          productId
-        );
-        Promise.all([promisesDeleteCloud, promisesDeleteTable]).then((value) =>
-          console.log(value)
-        );
-      });
-    }
-    // delete poster
-    const resultSearchPoster = await repo.product.searchPosterByProductId(
-      productId
-    );
-    if (resultSearchPoster.length > 1) {
-      const promisesDeleteCloud = resultSearchPoster.map(async (imageURL) => {
-        console.log(imageURL.posters);
-        let publicId = imageURL.posters.split("/")[7].split(".")[0];
-        await utils.cloudinary.delete(publicId);
-        // delete on table
-        const promisesDeleteTable = await repo.product.deletePosterByProductId(
-          productId
-        );
-        Promise.all([promisesDeleteCloud, promisesDeleteTable]).then((value) =>
-          console.log(value)
-        );
-      });
-    }
-    const checkImage = await repo.product.searchPosterByProductId(productId);
-    const checkPoster = await repo.product.searchPosterByProductId(productId);
-    if (checkImage.length < 1 && checkPoster.length < 1) {
-      await repo.product.deleteProduct(productId);
-    }
-
-    res.status(200).json({ message: "In Active success" });
-  } catch (err) {
-    console.log(err);
-    next(err);
-  }
-};
 // SOFT DELETE
 module.exports.deleteSoft = async (req, res, next) => {
   try {
@@ -446,7 +395,7 @@ module.exports.deletePoster1 = async (req, res, next) => {
     let publicId = posterURL.posters1.split("/")[7].split(".")[0];
 
     const promisesDeleteCloud = utils.cloudinary.delete(publicId);
-    const promisesDeleteTable = repo.product.deletePoster1ByProductId(posterId);
+    const promisesDeleteTable = repo.product.deletePoster1ByPosterId(posterId);
     await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
     res.status(200).json({ message: "delete poster 1 success" });
   } catch (err) {
@@ -462,7 +411,7 @@ module.exports.deletePoster2 = async (req, res, next) => {
     let publicId = posterURL.posters2.split("/")[7].split(".")[0];
 
     const promisesDeleteCloud = utils.cloudinary.delete(publicId);
-    const promisesDeleteTable = repo.product.deletePoster2ByProductId(posterId);
+    const promisesDeleteTable = repo.product.deletePoster2ByPosterId(posterId);
     await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
     res.status(200).json({ message: "delete poster 2 success" });
   } catch (err) {
@@ -478,7 +427,7 @@ module.exports.deletePoster3 = async (req, res, next) => {
     let publicId = posterURL.posters3.split("/")[7].split(".")[0];
 
     const promisesDeleteCloud = utils.cloudinary.delete(publicId);
-    const promisesDeleteTable = repo.product.deletePoster3ByProductId(posterId);
+    const promisesDeleteTable = repo.product.deletePoster3ByPosterId(posterId);
     await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
     res.status(200).json({ message: "delete poster 3 success" });
   } catch (err) {
@@ -493,7 +442,7 @@ module.exports.deletePoster4 = async (req, res, next) => {
     let publicId = posterURL.posters4.split("/")[7].split(".")[0];
 
     const promisesDeleteCloud = utils.cloudinary.delete(publicId);
-    const promisesDeleteTable = repo.product.deletePoster4ByProductId(posterId);
+    const promisesDeleteTable = repo.product.deletePoster4ByPosterId(posterId);
     await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
     res.status(200).json({ message: "delete poster 4 success" });
   } catch (err) {
@@ -508,7 +457,7 @@ module.exports.deletePoster5 = async (req, res, next) => {
     let publicId = posterURL.posters5.split("/")[7].split(".")[0];
 
     const promisesDeleteCloud = utils.cloudinary.delete(publicId);
-    const promisesDeleteTable = repo.product.deletePoster5ByProductId(posterId);
+    const promisesDeleteTable = repo.product.deletePoster5ByPosterId(posterId);
     await Promise.all([promisesDeleteCloud, promisesDeleteTable]);
     res.status(200).json({ message: "delete poster 5 success" });
   } catch (err) {
@@ -521,16 +470,16 @@ module.exports.createPoster1 = async (req, res, next) => {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
     }
-    const productId = +req.params.productId;
+    const posterId = +req.params.posterId;
 
     const posterURL = await repo.product.searchPoster1ByPosterId(posterId);
     //CHECK CLOUD AND DELETE ON CLOUD
-    if (posterURL) {
+    if (posterURL.posters1) {
       let publicId = posterURL.posters1.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster1ByProductId(productId, promisesUpdateCloud);
+    await repo.product.updatePoster1ByPostId(posterId, promisesUpdateCloud);
     res.status(200).json({ message: "update poster1 Success" });
   } catch (err) {
     console.log(err);
@@ -545,15 +494,15 @@ module.exports.createPoster2 = async (req, res, next) => {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
     }
-    const productId = +req.params.productId;
+    const posterId = +req.params.posterId;
     const posterURL = await repo.product.searchPoster2ByPosterId(posterId);
     //CHECK CLOUD AND DELETE ON CLOUD
-    if (posterURL) {
+    if (posterURL.posters2) {
       let publicId = posterURL.posters2.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster2ByProductId(productId, promisesUpdateCloud);
+    await repo.product.updatePoster2ByPostId(posterId, promisesUpdateCloud);
     res.status(200).json({ message: "update poster2 Success" });
   } catch (err) {
     console.log(err);
@@ -568,15 +517,15 @@ module.exports.createPoster3 = async (req, res, next) => {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
     }
-    const productId = +req.params.productId;
+    const posterId = +req.params.posterId;
     const posterURL = await repo.product.searchPoster3ByPosterId(posterId);
     //CHECK CLOUD AND DELETE ON CLOUD
-    if (posterURL) {
+    if (posterURL.posters3) {
       let publicId = posterURL.posters3.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster3ByProductId(productId, promisesUpdateCloud);
+    await repo.product.updatePoster3ByPostId(posterId, promisesUpdateCloud);
     res.status(200).json({ message: "update poster3 Success" });
   } catch (err) {
     console.log(err);
@@ -591,15 +540,15 @@ module.exports.createPoster4 = async (req, res, next) => {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
     }
-    const productId = +req.params.productId;
+    const posterId = +req.params.posterId;
     const posterURL = await repo.product.searchPoster4ByPosterId(posterId);
     //CHECK CLOUD AND DELETE ON CLOUD
-    if (posterURL) {
+    if (posterURL.posters4) {
       let publicId = posterURL.posters4.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster4ByProductId(productId, promisesUpdateCloud);
+    await repo.product.updatePoster4ByPostId(posterId, promisesUpdateCloud);
     res.status(200).json({ message: "update poster4 Success" });
   } catch (err) {
     console.log(err);
@@ -614,15 +563,15 @@ module.exports.createPoster5 = async (req, res, next) => {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
     }
-    const productId = +req.params.productId;
+    const posterId = +req.params.posterId;
     const posterURL = await repo.product.searchPoster5ByPosterId(posterId);
     //CHECK CLOUD AND DELETE ON CLOUD
-    if (posterURL) {
+    if (posterURL.posters5) {
       let publicId = posterURL.posters5.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
     const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster5ByProductId(productId, promisesUpdateCloud);
+    await repo.product.updatePoster5ByPostId(posterId, promisesUpdateCloud);
     res.status(200).json({ message: "update poster5 Success" });
   } catch (err) {
     console.log(err);

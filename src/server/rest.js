@@ -22,6 +22,7 @@ const statusProductRoute = require("../router/status-product");
 const { expireTransaction } = require("../service/auto-update-transaction");
 const { updateStatusProduct } = require("../service/auto-update-product");
 const summaryRoute = require("../router/summary");
+const liveChatRoute = require("../router/live-chat");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
@@ -51,7 +52,7 @@ module.exports = function restApiServer(app) {
   app.use("/watch", watchListRoute);
   app.use("/status_product", statusProductRoute);
   app.use("/summary", summaryRoute);
-  app.use("/liveChat");
+  app.use("/live-chat", liveChatRoute);
 
   // // scheduleDatabaseUpdate("*/2 * * * * *", expireTransaction);
   // scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
