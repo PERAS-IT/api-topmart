@@ -23,6 +23,14 @@ module.exports.updateAllItemPaymentByTransactioonId = async (
     where: { transactionId },
     data: { payStatus },
   });
+// ลด stockQuantity
+module.exports.deceaseStock = async (quanitiy) =>
+  await prisma.products.update({
+    where: { id: item.productId },
+    data: {
+      stockQuantity: { decrement: quanitiy },
+    },
+  });
 // ลบ itemPayment ไม่มีเชื่อมต่อไปหน้าบ้าน
 module.exports.deleteItemPayment = async (id) =>
   await prisma.itemPayment.delete({ where: { id } });
@@ -31,7 +39,7 @@ module.exports.getToptenItemPayment = async (sevenDayAgo) =>
   await prisma.itemPayment.groupBy({
     by: ["productsId"],
     _sum: { totalSale: { _mu1: { price: true, quantity: true } } },
-    where: { transaction: { createAt: { gte: sevenDayAgo } } },
+    where: { transaction: { createdAt: { gte: sevenDayAgo } } },
     orderBy: { _sum: "desc" },
     take: 10,
   });
@@ -43,4 +51,7 @@ module.exports.getToptenProduct = async (id) =>
 module.exports.getProductById = async (id) =>
   await prisma.products.findFirst({ where: { id } });
 module.exports.updateProductStockByExpireTran = async (id, stockQuantity) =>
-  await prisma.products.updateMany({ where: { id: { in: id } } });
+  await prisma.products.updateMany({
+    where: { id },
+    data: { stockQuantity: { increment: stockQuantity }, isSoldOut: false },
+  });

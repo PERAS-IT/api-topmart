@@ -21,6 +21,7 @@ const watchListRoute = require("../router/watchList");
 const statusProductRoute = require("../router/status-product");
 const { expireTransaction } = require("../service/auto-update-transaction");
 const { updateStatusProduct } = require("../service/auto-update-product");
+const summaryRoute = require("../router/summary");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
@@ -49,8 +50,9 @@ module.exports = function restApiServer(app) {
   app.use("/reward", rewardRoute);
   app.use("/watch", watchListRoute);
   app.use("/status_product", statusProductRoute);
+  app.use("/summary", summaryRoute);
 
-  // scheduleDatabaseUpdate("*/20 * * * * *", expireTransaction);
+  // // scheduleDatabaseUpdate("*/2 * * * * *", expireTransaction);
   // scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
   //=====================================================Throwing Zone
   app.use(notFound);
