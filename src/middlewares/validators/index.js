@@ -9,5 +9,6 @@ const validate = {
   userProfile: require("./validate-userProfile"),
   paymentItemId: require("./validate-paymentItemId"),
   arrCart: require("./validate-arrCartItem"),
+  addProduct: require("./validate-addProduct"),
 };
 module.exports = validate;
