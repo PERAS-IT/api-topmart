@@ -465,7 +465,7 @@ module.exports.deletePoster5 = async (req, res, next) => {
   }
 };
 //UPDATE  POSTER1 BY ID
-module.exports.createPoster1 = async (req, res, next) => {
+module.exports.updatePoster1 = async (req, res, next) => {
   try {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
@@ -489,7 +489,7 @@ module.exports.createPoster1 = async (req, res, next) => {
   }
 };
 //UPDATE  POSTER2 BY ID
-module.exports.createPoster2 = async (req, res, next) => {
+module.exports.updatePoster2 = async (req, res, next) => {
   try {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
@@ -512,7 +512,7 @@ module.exports.createPoster2 = async (req, res, next) => {
   }
 };
 //UPDATE  POSTER3 BY ID
-module.exports.createPoster3 = async (req, res, next) => {
+module.exports.updatePoster3 = async (req, res, next) => {
   try {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
@@ -535,7 +535,7 @@ module.exports.createPoster3 = async (req, res, next) => {
   }
 };
 //UPDATE  POSTER4 BY ID
-module.exports.createPoster4 = async (req, res, next) => {
+module.exports.updatePoster4 = async (req, res, next) => {
   try {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
@@ -558,7 +558,7 @@ module.exports.createPoster4 = async (req, res, next) => {
   }
 };
 //UPDATE  POSTER5 BY ID
-module.exports.createPoster5 = async (req, res, next) => {
+module.exports.updatePoster5 = async (req, res, next) => {
   try {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
