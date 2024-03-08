@@ -9,5 +9,7 @@ const repo = {
   watchList: require("./watchList"),
   statusProduct: require("./status-product"),
   summary: require("./summary"),
+  getProduct: require("./get-product"),
+  liveChat: require("./live-chat"),
 };
 module.exports = repo;

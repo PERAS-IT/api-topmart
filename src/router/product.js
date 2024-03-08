@@ -97,22 +97,27 @@ productRoute.post(
   c.product.deleteCover
 );
 //=======================================IMAGE=====
+
+//ADD
 productRoute.post(
-  "/upload_image/:productId",
+  "/add_image/:productId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
-  c.product.createImage
+  c.product.addImage
 );
-productRoute.post(
+//DELETE
+productRoute.delete(
   "/delete_image/:imageId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.deleteImage
 );
-productRoute.post(
+//UPDATE
+productRoute.patch(
   "/update_image/:imageId",
   authenticate,
+  uploadMiddlewareSingle,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.updateImage
 );

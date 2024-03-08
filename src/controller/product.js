@@ -24,7 +24,7 @@ module.exports.createProductSeries = async (req, res, next) => {
       throw new CustomError("series name had been used", "WRONG_INPUT", 400);
     }
 
-    const resultSeries = await repo.product.createProductSeries(series);
+    const resultSeries = await repo.product.createProductSeries(req.body);
     res.status(200).json({ resultSeries });
   } catch (err) {
     console.log(err);
@@ -285,11 +285,10 @@ module.exports.updateCover = async (req, res, next) => {
 
     let publicId = coverURL.cover.split("/")[7].split(".")[0];
     await utils.cloudinary.delete(publicId);
-    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    const promisesUpdateTable = await repo.product.updateCover(
-      coverId,
-      promisesUpdateCloud
-    );
+
+    const updateCloudURL = await utils.cloudinary.upload(req.file.path);
+
+    await repo.product.updateCover(coverId, updateCloudURL);
     res.status(200).json({ message: "update Cover Success" });
   } catch (err) {
     console.log(err);
@@ -320,7 +319,8 @@ module.exports.deleteImage = async (req, res, next) => {
     next(err);
   }
 };
-module.exports.createImage = async (req, res, next) => {
+module.exports.addImage = async (req, res, next) => {
+  console.log(req.files);
   try {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);
@@ -331,7 +331,7 @@ module.exports.createImage = async (req, res, next) => {
     data.images = pathURL;
     await repo.product.createImageProduct(data);
 
-    res.status(200).json({ message: "crate image Success" });
+    res.status(200).json({ message: "add image Success" });
   } catch (err) {
     console.log(err);
     next(err);
@@ -349,18 +349,18 @@ module.exports.updateImage = async (req, res, next) => {
 
     let publicId = imageURL.images.split("/")[7].split(".")[0];
     console.log(publicId);
+    //DELETE CLOUDE
     await utils.cloudinary.delete(publicId);
-    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    const promisesUpdateTable = repo.product.updateImageProduct(
-      imageId,
-      promisesUpdateCloud
-    );
+    //UPDATE CLOUDE
+    const updateCloudURL = await utils.cloudinary.upload(req.file.path);
+    //UPDATE TABLE
+    await repo.product.updateImageProduct(imageId, updateCloudURL);
     res.status(200).json({ message: "update image Success" });
   } catch (err) {
     console.log(err);
     next(err);
   } finally {
-    fs.unlink();
+    fs.unlink(req.file.path);
   }
 };
 //================================POSTER PRODUCT=====
@@ -478,8 +478,8 @@ module.exports.updatePoster1 = async (req, res, next) => {
       let publicId = posterURL.posters1.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
-    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster1ByPostId(posterId, promisesUpdateCloud);
+    const updateCloudURL = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster1ByPostId(posterId, updateCloudURL);
     res.status(200).json({ message: "update poster1 Success" });
   } catch (err) {
     console.log(err);
@@ -501,8 +501,8 @@ module.exports.updatePoster2 = async (req, res, next) => {
       let publicId = posterURL.posters2.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
-    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster2ByPostId(posterId, promisesUpdateCloud);
+    const updateCloudURL = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster2ByPostId(posterId, updateCloudURL);
     res.status(200).json({ message: "update poster2 Success" });
   } catch (err) {
     console.log(err);
@@ -524,8 +524,8 @@ module.exports.updatePoster3 = async (req, res, next) => {
       let publicId = posterURL.posters3.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
-    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster3ByPostId(posterId, promisesUpdateCloud);
+    const updateCloudURL = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster3ByPostId(posterId, updateCloudURL);
     res.status(200).json({ message: "update poster3 Success" });
   } catch (err) {
     console.log(err);
@@ -547,8 +547,8 @@ module.exports.updatePoster4 = async (req, res, next) => {
       let publicId = posterURL.posters4.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
-    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster4ByPostId(posterId, promisesUpdateCloud);
+    const updateCloudURL = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster4ByPostId(posterId, updateCloudURL);
     res.status(200).json({ message: "update poster4 Success" });
   } catch (err) {
     console.log(err);
@@ -570,8 +570,8 @@ module.exports.updatePoster5 = async (req, res, next) => {
       let publicId = posterURL.posters5.split("/")[7].split(".")[0];
       await utils.cloudinary.delete(publicId);
     }
-    const promisesUpdateCloud = await utils.cloudinary.upload(req.file.path);
-    await repo.product.updatePoster5ByPostId(posterId, promisesUpdateCloud);
+    const updateCloudURL = await utils.cloudinary.upload(req.file.path);
+    await repo.product.updatePoster5ByPostId(posterId, updateCloudURL);
     res.status(200).json({ message: "update poster5 Success" });
   } catch (err) {
     console.log(err);

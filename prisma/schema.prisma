@@ -150,6 +150,7 @@ model Products {
   cartItems      CartItems[]
   itemPayments   ItemPayment[]
   productCover   ProductCover[]
+  lendingImage   LandingImage[]
 
   @@map("products")
 }
@@ -251,8 +252,12 @@ model Transaction {
 }
 
 model LandingImage {
-  id    Int     @id @default(autoincrement())
-  image String?
+  id         Int      @id @default(autoincrement())
+  image      String?
+  Products   Products @relation(fields: [productsId], references: [id])
+  productsId Int      @map("product_id")
+
+  @@map("landing_image")
 }
 
 enum TransactionStatus {

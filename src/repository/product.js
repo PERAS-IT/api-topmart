@@ -94,6 +94,7 @@ module.exports.updateQuantity = async (id, quantity) =>
   });
 module.exports.getAllProduct = async () =>
   await prisma.products.findMany({
+    where: { isActive: true },
     include: {
       productSeries: true,
       productGroup: true,
@@ -117,7 +118,7 @@ module.exports.getProductById = async (idProduct) =>
   });
 
 module.exports.deleteProductSoft = async (id) =>
-  await prisma.products.update({ where: { isActive: false } });
+  await prisma.products.update({ where: id, data: { isActive: false } });
 
 module.exports.deleteProduct = async (id) =>
   await prisma.products.delete({ where: { id } });
