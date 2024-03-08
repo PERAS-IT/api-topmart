@@ -23,7 +23,7 @@ const canCelTransaction = async (id, point, userId) => {
           })
         )
       );
-      // RETUEN product to stock
+      // RETURN product to stock
       await Promise.all(
         itemPayment.map(async (item) =>
           prisma.products.update({

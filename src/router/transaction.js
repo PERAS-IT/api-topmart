@@ -24,5 +24,26 @@ transactionRoute.patch(
 );
 // user see transaction
 transactionRoute.get("/", authenticate, c.transaction.getTransactionByUserId);
+// admin see all transaction
+transactionRoute.get(
+  "/all",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.transaction.getAllTransaction
+);
+// admin see all fail transaction
+transactionRoute.get(
+  "/all/fail",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.transaction.getAllFailTransaction
+);
+// admin see all complete transaction
+transactionRoute.get(
+  "/all/complete",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.transaction.getAllCompleteTransaction
+);
 
 module.exports = transactionRoute;

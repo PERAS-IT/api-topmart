@@ -16,15 +16,13 @@ const stripe = require("../utils/stripe");
 // USER CREATE TRANSACTION
 module.exports.createTransaction = async (req, res, next) => {
   try {
-    // //   // FIND transaction
-    // const transaction = await repo.transaction.getTransactionPendingByUserId(
-    //   req.user.id
-    // );
-    // if (transaction)
-    //   throw new CustomError("user already has transaction", "WRONG_INPUT", 400);
-    // CHECK reward
+    // FIND transaction
     const cartItemId = req.body.cartItemId;
+    console.log(cartItemId);
     delete req.body.cartItemId;
+    const cartItemActive = await repo.cart.getCartItemByCartItemId(cartItemId);
+    if (cartItemId.length != cartItemActive.length)
+      throw new CustomError("invalid product included", "WRONG_INPUT", 400);
     let point;
     if (req.body.reward >= 0 || req.body.discount >= 0) {
       const reward = await repo.reward.getReward(req.user.id);
@@ -66,8 +64,6 @@ module.exports.createTransaction = async (req, res, next) => {
         quantity: +item.quantity,
       });
     }
-    console.log(line_item);
-    console.log(discount);
     if (discount == 0 && newTransaction.discount == 0) {
       const url = await stripe.payment(line_item);
       return res.status(200).json({ url, newTransaction });
@@ -115,7 +111,6 @@ module.exports.updateTransaction = async (req, res, next) => {
         "ORDER COMPLETE",
         "your payment was success"
       );
-      console.log(newTransactionStatus);
       return res.status(200).json({ newTransactionStatus });
     } else throw new CustomError("invalid status", "WRONG_INPUT", 400);
   } catch (err) {
@@ -137,10 +132,42 @@ module.exports.getTransactionByUserId = async (req, res, next) => {
   return;
 };
 
+// ADMIN GET ALL TRANSACTION
+module.exports.getAllTransaction = async (req, res, next) => {
+  try {
+    const transaction = await repo.transaction.getAllTransaction();
+    res.status(200).json({ transaction });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+
+// ADMIN GET ALL FAIL TRANSACTION
+module.exports.getAllFailTransaction = async (req, res, next) => {
+  try {
+    const transaction = await repo.transaction.getAllFailTransaction();
+    res.status(200).json({ transaction });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+
+// ADMIN GET ALL COMPLETE TRANSACTION
+module.exports.getAllCompleteTransaction = async (req, res, next) => {
+  try {
+    const transaction = await repo.transaction.getAllCompleteTransaction();
+    res.status(200).json({ transaction });
+  } catch (err) {
+    next(err);
+  }
+  return;
+};
+
 // for backend only use to test
 module.exports.deleteTransaction = async (req, res, next) => {
   try {
-    console.log(req.transactionId);
     await repo.transaction.deleteTransaction(req.transactionId);
     res.status(204).json({});
   } catch (err) {

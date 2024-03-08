@@ -10,7 +10,7 @@ const { uploadMiddlewareLanding } = require("../middlewares/upload");
 const landingRoute = express.Router();
 
 //=======================================LANDING PAGE=====
-landingRoute.get("/", c.landing.getLanding.getLanding);
+landingRoute.get("/", c.landing.getLanding);
 landingRoute.post(
   "/upload",
   authenticate,

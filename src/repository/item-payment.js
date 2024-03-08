@@ -43,6 +43,9 @@ module.exports.getToptenItemPayment = async (sevenDayAgo) =>
     orderBy: { _sum: "desc" },
     take: 10,
   });
+// หา itemPayment จาก id
+module.exports.getItemPaymentById = async (id) =>
+  await prisma.itemPayment.findFirst({ where: { id } });
 
 // หา topten product by itemPaymentId
 module.exports.getToptenProduct = async (id) =>

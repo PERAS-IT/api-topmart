@@ -21,7 +21,7 @@ module.exports.getTotalSaleBySerieInThirtyDay = async () => {
             JOIN
         product_series ps ON p.serie_id = ps.id
     WHERE t.paymented_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-    AND t.paymented_at <= CURDATE() AND t.status = "COMPLETE"
+    OR t.paymented_at <= CURDATE() AND t.status = "COMPLETE"
     GROUP BY serieName
     order by totalSales desc;`;
   return salesBySeries;
@@ -38,7 +38,7 @@ FROM
     products p ON i.product_id = p.id
 WHERE
     t.paymented_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-        AND t.paymented_at <= CURDATE() AND t.status = "COMPLETE"
+        OR t.paymented_at <= CURDATE() AND t.status = "COMPLETE"
 GROUP BY p.product_name
 order by totalSales desc;`;
   return salesByName;

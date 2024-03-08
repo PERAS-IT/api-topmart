@@ -34,6 +34,23 @@ module.exports.getTransactionPenddingbyTransactionId = async (id) =>
   await prisma.transaction.findFirst({
     where: { id, status: TransactionStatus.PENDING },
   });
+// ดู transaction ทั้งหมด
+module.exports.getAllTransaction = async () =>
+  await prisma.transaction.findMany({
+    include: { user: { select: { email: true } } },
+  });
+// ดู​ transaction fail ทั้งหมด
+module.exports.getAllFailTransaction = async () =>
+  await prisma.transaction.findMany({
+    where: { status: TransactionStatus.FAIL },
+    include: { user: { select: { email: true } } },
+  });
+// ดู transaction complete ทั้งหมด
+module.exports.getAllCompleteTransaction = async () =>
+  await prisma.transaction.findMany({
+    where: { status: TransactionStatus.COMPLETE },
+    include: { user: { select: { email: true } } },
+  });
 // ลบ  transaction
 module.exports.deleteTransaction = async (id) =>
   await prisma.transaction.delete({

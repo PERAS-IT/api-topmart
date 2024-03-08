@@ -49,3 +49,13 @@ module.exports.createPayment = async (req, res, next) => {
   }
   return;
 };
+
+module.exports.sendMail = async (req, res, next) => {
+  try {
+    const user = await repo.user.userSub();
+    user.map((el) => {});
+  } catch (err) {
+    next(err);
+  }
+  return;
+};

@@ -22,7 +22,6 @@ module.exports.paymentWithDiscount = async (line_items, amount_off) => {
     amount_off,
     duration: "once",
   });
-  // console.log(coupon.id);
   const session = await stripe.checkout.sessions.create({
     line_items,
     discounts: [
