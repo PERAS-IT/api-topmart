@@ -35,6 +35,15 @@ const manageExpireTransaction = async (expireTransaction) => {
           );
         })
       );
+      await Promise.all(
+        expireTransaction.map(async (transaction) => {
+          const point = transaction.discount * 100;
+          await prisma.reward.update({
+            where: { userId: transaction.userId },
+            data: { point: { increment: point } },
+          });
+        })
+      );
     });
   } catch (err) {
     console.log(err);

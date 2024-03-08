@@ -22,6 +22,8 @@ const statusProductRoute = require("../router/status-product");
 const { expireTransaction } = require("../service/auto-update-transaction");
 const { updateStatusProduct } = require("../service/auto-update-product");
 const summaryRoute = require("../router/summary");
+const { updateTagProduct } = require("../service/auto-update-tagproduct");
+const paymentRoute = require("../router/payment");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
@@ -53,6 +55,7 @@ module.exports = function restApiServer(app) {
   app.use("/summary", summaryRoute);
 
   // // scheduleDatabaseUpdate("*/2 * * * * *", expireTransaction);
+  // scheduleDatabaseUpdate("0 0 * * * * *", updateTagProduct);
   // scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
   //=====================================================Throwing Zone
   app.use(notFound);

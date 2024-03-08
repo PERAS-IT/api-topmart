@@ -19,16 +19,18 @@ const createTransactionWithItemPayment = async (
         data: body,
       });
       // change cartItemId to arr [2,4]
-      const itemId = cartItemId.split(",").map((el) => Number(el));
+      const itemId = cartItemId.map((el) => Number(el));
+      console.log(itemId);
       // FIND cartItem data by cartItemId
       if (itemId.length === 0)
-        CustomError("invalid cartItemId", "WRONG_INPUT", 400);
+        throw new CustomError("invalid cartItemId", "WRONG_INPUT", 400);
       const itemData = await prisma.cartItems.findMany({
         where: { id: { in: itemId } },
         select: { quantity: true, price: true, productId: true },
       });
+      console.log(itemData);
       if (itemData.length === 0)
-        CustomError("invalid cartItemId", "WRONG_INPUT", 400);
+        throw new CustomError("invalid cartItemId", "WRONG_INPUT", 400);
       for (data of itemData) {
         data.transactionId = newTransaction.id;
       }

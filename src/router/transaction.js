@@ -9,10 +9,9 @@ const { Role } = require("@prisma/client");
 const transactionRoute = express.Router();
 
 transactionRoute.post(
-  "/:cartItemId",
+  "/",
   authenticate,
   checkPermission(Role.USER),
-  v.arrCart.validateArrCart,
   c.transaction.createTransaction
 );
 // update transaction user

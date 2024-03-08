@@ -9,5 +9,6 @@ const repo = {
   watchList: require("./watchList"),
   statusProduct: require("./status-product"),
   summary: require("./summary"),
+  auto: require("./auto"),
 };
 module.exports = repo;

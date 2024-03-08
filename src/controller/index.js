@@ -10,5 +10,6 @@ const controller = {
   watchList: require("./watchList"),
   statusProduct: require("./status-product"),
   summary: require("./summary"),
+  payment: require("./payment"),
 };
 module.exports = controller;

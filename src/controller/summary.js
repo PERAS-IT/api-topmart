@@ -12,24 +12,21 @@ module.exports.getSummary = async (req, res, next) => {
       thirtyDaysAgo,
       tomorrow
     );
+    console.log(transactionInthirtyDay);
     const summary = {};
-    for (transition of transactionInthirtyDay) {
-      const date = transition.createdAt.toISOString().split("T")[0];
+    for (transaction of transactionInthirtyDay) {
+      const date = transaction.createdAt.toISOString().split("T")[0];
       if (!summary[date]) {
-        const itemPayment =
-          await repo.itemPayment.getAllItemPaymentByTransactionId(
-            transition.id
-          );
         summary[date] = { totalSale: 0 };
-        for (sale of itemPayment) {
-          summary[date].totalSale += sale.price * sale.quantity;
-        }
+        summary[date].totalSale += +transaction.totalAmount;
+      } else {
+        summary[date].totalSale += +transaction.totalAmount;
       }
     }
     const dates = Object.keys(summary);
     const totalSales = Object.values(summary).map((item) => item.totalSale);
 
-    const result = {
+    const totalSaleByDateInThirtyDay = {
       date: dates,
       totalSale: totalSales,
     };
@@ -37,6 +34,7 @@ module.exports.getSummary = async (req, res, next) => {
     const totalSaleBySerie =
       await repo.summary.getTotalSaleBySerieInThirtyDay();
 
+    console.log(totalSaleBySerie);
     const totalSaleBySerieInThirtyDay = {
       serieId: totalSaleBySerie.map((item) => item.serieId),
       serieName: totalSaleBySerie.map((item) => item.serieName),
@@ -46,19 +44,18 @@ module.exports.getSummary = async (req, res, next) => {
     const totalSaleByProduct =
       await repo.summary.getTotalSaleByProductNameInThirtyDay();
 
+    console.log(totalSaleByProduct);
     const totalSaleByNameInThirtyDay = {
       productId: totalSaleByProduct.map((item) => item.productId),
       productName: totalSaleByProduct.map((item) => item.productName),
-      totalSales: totalSaleByProduct.map((item) => item.totalSale),
+      totalSales: totalSaleByProduct.map((item) => item.totalSales),
     };
 
-    res
-      .status(200)
-      .json({
-        totalSaleBydate: result,
-        totalSaleBySerieInThirtyDay,
-        totalSaleByNameInThirtyDay,
-      });
+    res.status(200).json({
+      totalSaleByDateInThirtyDay,
+      totalSaleBySerieInThirtyDay,
+      totalSaleByNameInThirtyDay,
+    });
   } catch (err) {
     next(err);
   }
