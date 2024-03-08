@@ -17,7 +17,12 @@ module.exports.getAllItemIncartByCartId = async (cartId) =>
     where: { cartId },
     include: {
       products: {
-        select: { productName: true, productCover: true },
+        select: {
+          productCover: true,
+          productName: true,
+          price: true,
+          brand: true,
+        },
       },
     },
   });

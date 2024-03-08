@@ -11,5 +11,6 @@ const repo = {
   summary: require("./summary"),
   getProduct: require("./get-product"),
   liveChat: require("./live-chat"),
+  auto: require("./auto"),
 };
 module.exports = repo;

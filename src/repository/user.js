@@ -74,23 +74,12 @@ module.exports.updateSub = async (data, userId) =>
 // ลบ account (soft delete)
 module.exports.deleteAccount = async (id) =>
   prisma.user.update({ where: id, data: { isActive: false } });
-// // ดู transaction
-// module.exports.getTransactionByUserId = async (userId) =>
-//   await prisma.transaction.findFirst({ where: { userId } });
-// // สร้าง transaction
-// module.exports.createTransaction = async (data) =>
-//   await prisma.transaction.create({ data });
-// // อัพเดท transaction
-// module.exports.updateTransaction = async (data, id) =>
-//   await prisma.transaction.update({ where: { id }, data });
-// // เลือกดู cartitem จาก cartItemId
-// module.exports.getCartItemByCartItemId = async (id) =>
-//   await prisma.cartItems.findMany({
-//     where: { id: { in: id } },
-//     select: { quantity: true, price: true, productId: true },
-//   });
+// สร้าง itemPayment
 module.exports.createItemPayment = async (data) =>
   await prisma.itemPayment.createMany({ data });
+// หา user subscribe
+module.exports.userSub = async () =>
+  await prisma.userSubscribe.findMany({ where: { isSubscribe: true } });
 // ลบ user
 module.exports.delete = async (id) =>
   await prisma.user.delete({ where: { id } });

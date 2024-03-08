@@ -24,6 +24,7 @@ const { updateStatusProduct } = require("../service/auto-update-product");
 const summaryRoute = require("../router/summary");
 const liveChatRoute = require("../router/live-chat");
 const getProductRoute = require("../router/get-product");
+const { updateTagProduct } = require("../service/auto-update-tagproduct");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
@@ -57,6 +58,7 @@ module.exports = function restApiServer(app) {
   app.use("/live-chat", liveChatRoute);
 
   // // scheduleDatabaseUpdate("*/2 * * * * *", expireTransaction);
+  // scheduleDatabaseUpdate("0 0 * * * * *", updateTagProduct);
   // scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
   //=====================================================Throwing Zone
   app.use(notFound);
