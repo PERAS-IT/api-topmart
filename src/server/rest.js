@@ -25,7 +25,6 @@ const summaryRoute = require("../router/summary");
 const liveChatRoute = require("../router/live-chat");
 const getProductRoute = require("../router/get-product");
 const { updateTagProduct } = require("../service/auto-update-tagproduct");
-const paymentRoute = require("../router/payment");
 
 //=====================================================Server Zone
 module.exports = function restApiServer(app) {
