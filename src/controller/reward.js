@@ -1,6 +1,7 @@
 const { CustomError } = require("../config/error");
 const repo = require("../repository");
 
+// GET REWARD USER
 module.exports.getRewardUser = async (req, res, next) => {
   try {
     const reward = await repo.reward.getReward(req.user.id);
@@ -11,6 +12,8 @@ module.exports.getRewardUser = async (req, res, next) => {
   }
   return;
 };
+
+// UPDATE POINT REWARD
 module.exports.updateRewardUser = async (req, res, next) => {
   try {
     const userReward = await repo.reward.getReward(req.user.id);
