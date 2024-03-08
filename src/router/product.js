@@ -57,13 +57,7 @@ productRoute.post(
   v.addProduct.validateAddProduct,
   c.product.createProduct
 ); // test
-// HEARD DELETE PRODUCT
-productRoute.post(
-  "/delete/:productId",
-  authenticate,
-  checkPermission(Role.SUPERADMIN),
-  c.product.deleteProduct
-); // not open
+
 // SOFT DELETE PRODUCT
 productRoute.patch(
   "/inactive/:productId",
@@ -103,81 +97,103 @@ productRoute.post(
   c.product.deleteCover
 );
 //=======================================IMAGE=====
+
+//ADD
 productRoute.post(
-  "/upload_image/:productId",
+  "/add_image/:productId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
-  c.product.createImage
+  c.product.addImage
 );
-productRoute.post(
+//DELETE
+productRoute.delete(
   "/delete_image/:imageId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.deleteImage
 );
+//UPDATE
+productRoute.patch(
+  "/update_image/:imageId",
+  authenticate,
+  uploadMiddlewareSingle,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.product.updateImage
+);
 
 //========================================POSTER====
+// update Poster
+//1
 productRoute.patch(
-  "/upload_poster1/:productId",
+  "/upload_poster1/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
-  c.product.createPoster1
+  c.product.updatePoster1
 );
+//2
 productRoute.patch(
-  "/upload_poster2/:productId",
+  "/upload_poster2/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
-  c.product.createPoster2
+  c.product.updatePoster2
 );
+//3
 productRoute.patch(
-  "/upload_poster3/:productId",
+  "/upload_poster3/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
-  c.product.createPoster3
+  c.product.updatePoster3
 );
+//4
 productRoute.patch(
-  "/upload_poster4/:productId",
+  "/upload_poster4/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
-  c.product.createPoster4
+  c.product.updatePoster4
 );
+//5
 productRoute.patch(
-  "/upload_poster5/:productId",
+  "/upload_poster5/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareSingle,
-  c.product.createPoster5
+  c.product.updatePoster5
 );
-
+// delete Poster
+//1
 productRoute.patch(
   "/delete_poster1/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.deletePoster1
 );
+//2
 productRoute.patch(
   "/delete_poster2/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.deletePoster2
 );
+//3
 productRoute.patch(
   "/delete_poster3/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.deletePoster3
 );
+//4
 productRoute.patch(
   "/delete_poster4/:posterId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.product.deletePoster4
 );
+//5
 productRoute.patch(
   "/delete_poster5/:posterId",
   authenticate,

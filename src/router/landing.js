@@ -18,17 +18,17 @@ landingRoute.post(
   uploadMiddlewareLanding,
   c.landing.uploadLanding
 );
-landingRoute.post(
+landingRoute.delete(
   "/delete/:landingId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.landing.deleteLanding
 );
-landingRoute.post(
-  "/delete/multi",
-  authenticate,
-  checkPermission(Role.ADMIN, Role.SUPERADMIN),
-  c.landing.deleteMultiLanding
-);
+// landingRoute.post(
+//   "/delete/multi",
+//   authenticate,
+//   checkPermission(Role.ADMIN, Role.SUPERADMIN),
+//   c.landing.deleteMultiLanding
+// );
 
 module.exports = landingRoute;

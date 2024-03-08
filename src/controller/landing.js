@@ -6,7 +6,7 @@ const fs = require("fs/promises");
 module.exports.getLanding = async (req, res, next) => {
   try {
     const resultLanding = await repo.landing.getAllLanding();
-    res.status(200).status({ resultLanding });
+    res.status(200).json({ resultLanding });
   } catch (err) {
     console.log(err);
     next(err);
@@ -15,7 +15,7 @@ module.exports.getLanding = async (req, res, next) => {
 
 module.exports.uploadLanding = async (req, res, next) => {
   try {
-    if (!req.files.image) {
+    if (!req.files) {
       throw new CustomError(
         "input landing image at least 1 image",
         "WRONG_INPUT",
@@ -47,9 +47,17 @@ module.exports.uploadLanding = async (req, res, next) => {
 };
 
 module.exports.deleteLanding = async (req, res, next) => {
-  const landingId = +req.params.landingId;
   try {
-    await repo.landing.deleteLandingById(landingId);
+    const landingId = +req.params.landingId;
+    const landingURL = await repo.landing.searchLanding(landingId);
+    let publicId = landingURL.image.split("/")[7].split(".")[0];
+    const promisesDeleteCloud = utils.cloudinary.delete(publicId);
+    const promisesDeleteTable = repo.landing.deleteLandingById(landingId);
+    await Promise.all([promisesDeleteCloud, promisesDeleteTable]).then(
+      (values) => {
+        console.log(values);
+      }
+    );
     res.status(200).json({ message: "delete Landing success" });
   } catch (err) {
     console.log(err);
