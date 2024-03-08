@@ -167,10 +167,10 @@ model WatchList {
 }
 
 model ProductCover {
-  id         Int      @id @default(autoincrement())
-  cover      String?
-  productsId Int      @unique @map("product_id")
-  Products   Products @relation(fields: [productsId], references: [id])
+  id        Int      @id @default(autoincrement())
+  cover     String?
+  productId Int      @unique @map("product_id")
+  Products  Products @relation(fields: [productId], references: [id])
 
   @@map("product_cover")
 }
@@ -252,10 +252,10 @@ model Transaction {
 }
 
 model LandingImage {
-  id         Int      @id @default(autoincrement())
-  image      String?
-  Products   Products @relation(fields: [productsId], references: [id])
-  productsId Int      @map("product_id")
+  id        Int      @id @default(autoincrement())
+  image     String?
+  Products  Products @relation(fields: [productId], references: [id])
+  productId Int      @map("product_id")
 
   @@map("landing_image")
 }

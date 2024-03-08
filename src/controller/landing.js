@@ -15,7 +15,7 @@ module.exports.getLanding = async (req, res, next) => {
 
 module.exports.uploadLanding = async (req, res, next) => {
   try {
-    const productId = req.params.productId;
+    const productId = +req.params.productId;
     if (!req.files) {
       throw new CustomError(
         "input landing image at least 1 image",
@@ -28,12 +28,13 @@ module.exports.uploadLanding = async (req, res, next) => {
     );
     photoLinkLanding = await Promise.all(landingPath);
     // update link on table product image
-    const updateLinkProduct = photoLinkLanding.map((link) => {
+    const updateLinkProduct = photoLinkLanding.map(async (link) => {
       const data = {
         image: link,
-        productsId: productId,
+        productId: productId,
       };
-      return repo.landing.createLandingPage(data);
+      console.log(data);
+      return await repo.landing.createLandingPage(data);
     });
     photoProduct = await Promise.all(updateLinkProduct);
 

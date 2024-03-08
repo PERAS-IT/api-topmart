@@ -12,7 +12,7 @@ const landingRoute = express.Router();
 //=======================================LANDING PAGE=====
 landingRoute.get("/", c.landing.getLanding);
 landingRoute.post(
-  "/upload",
+  "/upload/:productId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   uploadMiddlewareLanding,
