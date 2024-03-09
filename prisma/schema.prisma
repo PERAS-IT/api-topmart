@@ -170,7 +170,7 @@ model ProductCover {
   id        Int       @id @default(autoincrement())
   cover     String?
   products  Products? @relation(fields: [productId], references: [id])
-  productId Int?
+  productId Int       @map("product_id")
 
   @@map("product_cover")
 }
