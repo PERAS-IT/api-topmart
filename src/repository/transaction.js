@@ -32,7 +32,7 @@ module.exports.cancelTransaction = async (id) =>
 // ดู transaction pending by transactionId
 module.exports.getTransactionPenddingbyTransactionId = async (id) =>
   await prisma.transaction.findFirst({
-    where: { id, status: TransactionStatus.PENDING },
+    where: { billNumber: id, status: TransactionStatus.PENDING },
   });
 // ดู transaction ทั้งหมด
 module.exports.getAllTransaction = async () =>

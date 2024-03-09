@@ -90,9 +90,7 @@ module.exports.updateTransaction = async (req, res, next) => {
   try {
     // FIND transaction
     const transaction =
-      await repo.transaction.getTransactionPenddingbyTransactionId(
-        req.transactionId
-      );
+      await repo.transaction.getTransactionPenddingbyTransactionId(req.body.id);
     if (!transaction)
       throw new CustomError("transaction not found", "WRONG_INPUT", 400);
     if (req.body.status === TransactionStatus.FAIL) {
