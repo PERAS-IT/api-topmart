@@ -65,10 +65,14 @@ module.exports.createTransaction = async (req, res, next) => {
       });
     }
     if (discount == 0 && newTransaction.discount == 0) {
-      const url = await stripe.payment(line_item);
+      const url = await stripe.payment(line_item, newTransaction.id);
       return res.status(200).json({ url, newTransaction });
     }
-    const url = await stripe.paymentWithDiscount(line_item, discount * 100);
+    const url = await stripe.paymentWithDiscount(
+      line_item,
+      discount * 100,
+      newTransaction.id
+    );
     res.status(200).json({ url, newTransaction });
     // res.status(201).json({ transaction: newTransaction, itemPayment });
   } catch (err) {
