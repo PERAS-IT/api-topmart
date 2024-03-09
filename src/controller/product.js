@@ -320,7 +320,6 @@ module.exports.deleteImage = async (req, res, next) => {
   }
 };
 module.exports.addImage = async (req, res, next) => {
-  console.log(req.files);
   try {
     if (!req.file) {
       throw new CustomError("input file image", WRONG_INPUT, 400);

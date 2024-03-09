@@ -1,5 +1,7 @@
 const prisma = require("../config/prisma");
 
+//getProductBySeries
+
 module.exports.getProductBySeriesIdRaw = async (id) =>
   await prisma.$queryRaw`SELECT 
 ps.series, p.*, pc.cover
