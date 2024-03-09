@@ -5,10 +5,17 @@ const authenticate = require("../middlewares/authenticate");
 const { checkPermission } = require("../middlewares/checkPermission");
 const { Role } = require("@prisma/client");
 
-liveChatRoute.post(
-  "/send/:id",
+liveChatRoute.get(
+  "/get",
   authenticate,
-  checkPermission(Role.USER, Role.ADMIN, Role.SUPERADMIN),
-  c.liveChat.sendMessage
+  checkPermission(Role.USER),
+  c.liveChat.getMessage
 );
+liveChatRoute.get(
+  "/getAdmin/:userId",
+  authenticate,
+  checkPermission(Role.ADMIN, Role.SUPERADMIN),
+  c.liveChat.getMessageForAdmin
+);
+liveChatRoute.get("/getUser");
 module.exports = liveChatRoute;
