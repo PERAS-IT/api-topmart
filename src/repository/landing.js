@@ -1,6 +1,15 @@
 const prisma = require("../config/prisma");
 
-module.exports.getAllLanding = async () => await prisma.landingImage.findMany();
+module.exports.getAllLanding = async () =>
+  await prisma.landingImage.findMany({
+    include: {
+      Products: {
+        include: {
+          productCover: true,
+        },
+      },
+    },
+  });
 module.exports.createLandingPage = async (data) =>
   await prisma.landingImage.create({ data });
 module.exports.searchLanding = async (id) =>
