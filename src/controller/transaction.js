@@ -53,6 +53,7 @@ module.exports.createTransaction = async (req, res, next) => {
       throw new CustomError("totalAmount not match", "WRONG_INPUT", 400);
     for (item of itemPayment) {
       const product = await repo.product.getProductById(item.productId);
+      console.log(product);
       line_item.push({
         price_data: {
           currency: "thb",
@@ -61,11 +62,12 @@ module.exports.createTransaction = async (req, res, next) => {
             description: product.customDetail || "No detail",
             images: [product?.productCover[0]?.cover],
           },
-          unit_amount_decimal: +product.price,
+          unit_amount_decimal: +product.price * 100,
         },
         quantity: +item.quantity,
       });
     }
+    console.log("**********************", line_item);
     if (discount == 0 && newTransaction.discount == 0) {
       const url = await stripe.payment(line_item, newTransaction.billNumber);
       return res.status(200).json({ url });
