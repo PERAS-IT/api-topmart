@@ -3,19 +3,20 @@ const stripe = require("stripe")(
 );
 
 // domain frontend
-const YOUR_DOMAIN = "http://localhost:5173";
+const YOUR_DOMAIN = "http://localhost:5173/payment-result";
 
-module.exports.payment = async (line_items) => {
+module.exports.payment = async (line_items, id) => {
   const session = await stripe.checkout.sessions.create({
     line_items,
     mode: "payment",
-    success_url: `${YOUR_DOMAIN}?success=true`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+    success_url: `${YOUR_DOMAIN}?success=true?id=${id}`,
+    cancel_url: `${YOUR_DOMAIN}?canceled=true?id=${id}`,
   });
+  console.log(session);
   return session.url;
 };
 
-module.exports.paymentWithDiscount = async (line_items, amount_off) => {
+module.exports.paymentWithDiscount = async (line_items, amount_off, id) => {
   console.log(typeof amount_off);
   coupon = await stripe.coupons.create({
     currency: "thb",
@@ -30,8 +31,8 @@ module.exports.paymentWithDiscount = async (line_items, amount_off) => {
       },
     ],
     mode: "payment",
-    success_url: `${YOUR_DOMAIN}?success=true`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+    success_url: `${YOUR_DOMAIN}?success=true?id=${id}`,
+    cancel_url: `${YOUR_DOMAIN}?canceled=true?id=${id}`,
   });
   return session.url;
 };
