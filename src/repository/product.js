@@ -128,10 +128,10 @@ module.exports.deleteProduct = async (id) =>
 
 module.exports.deleteCover = async (id) =>
   await prisma.productCover.update({ where: { id }, data: { cover: null } });
-module.exports.createCover = async (productsId, cover) =>
+module.exports.createCover = async (productId, cover) =>
   await prisma.productCover.create({
     data: {
-      productsId,
+      productId,
       cover,
     },
   });
