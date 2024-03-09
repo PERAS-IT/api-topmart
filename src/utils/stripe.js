@@ -3,7 +3,7 @@ const stripe = require("stripe")(
 );
 
 // domain frontend
-const YOUR_DOMAIN = "http://localhost:5173";
+const YOUR_DOMAIN = "http://localhost:5173/payment-result";
 
 module.exports.payment = async (line_items, id) => {
   const session = await stripe.checkout.sessions.create({

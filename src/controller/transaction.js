@@ -1,4 +1,5 @@
 const { TransactionStatus } = require("@prisma/client");
+const { v4: uuidv4 } = require("uuid");
 const { CustomError } = require("../config/error");
 const repo = require("../repository");
 const {
@@ -36,6 +37,7 @@ module.exports.createTransaction = async (req, res, next) => {
       delete req.body.reward;
     }
     // USE transaction for create
+    req.body.billNumber = uuidv4();
     const { newTransaction, itemPayment } =
       await createTransactionWithItemPayment(
         req.user.id,
@@ -56,7 +58,7 @@ module.exports.createTransaction = async (req, res, next) => {
           currency: "thb",
           product_data: {
             name: product.productName,
-            description: product.customDetail,
+            description: product.customDetail || "No detail",
             images: [product?.productCover[0]?.cover],
           },
           unit_amount_decimal: +product.price,
@@ -65,15 +67,15 @@ module.exports.createTransaction = async (req, res, next) => {
       });
     }
     if (discount == 0 && newTransaction.discount == 0) {
-      const url = await stripe.payment(line_item, newTransaction.id);
-      return res.status(200).json({ url, newTransaction });
+      const url = await stripe.payment(line_item, newTransaction.billNumber);
+      return res.status(200).json({ url });
     }
     const url = await stripe.paymentWithDiscount(
       line_item,
       discount * 100,
-      newTransaction.id
+      newTransaction.billNumber
     );
-    res.status(200).json({ url, newTransaction });
+    res.status(200).json({ url });
     // res.status(201).json({ transaction: newTransaction, itemPayment });
   } catch (err) {
     next(err);

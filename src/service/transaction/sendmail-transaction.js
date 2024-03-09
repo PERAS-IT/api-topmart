@@ -11,15 +11,15 @@ const sendAllMail = async () => {
       let userId = [];
       user.map((el) => userId.push(el.id));
       const email = prisma.user.findMany({ where: { id: userId } });
-      //   let mail = [];
       const mail = email.map((user) => {
-        sendEmail;
-        mail.push(user.email, "New Product", "New Product is available now");
+        sendEmail(user.email, "New Product", "New Product is available now");
       });
-      await Promise.all();
+      await Promise.all(mail);
     });
   } catch (err) {
     console.log(err);
     throw err;
   }
 };
+
+module.exports = sendAllMail;
