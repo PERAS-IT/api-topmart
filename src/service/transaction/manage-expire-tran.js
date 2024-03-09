@@ -29,7 +29,7 @@ const manageExpireTransaction = async (expireTransaction) => {
             data.map(async (product) =>
               prisma.products.update({
                 where: { id: product.productId },
-                data: { stockQuantity: { decrement: product.quantity } },
+                data: { stockQuantity: { increment: product.quantity } },
               })
             )
           );
@@ -37,7 +37,7 @@ const manageExpireTransaction = async (expireTransaction) => {
       );
       await Promise.all(
         expireTransaction.map(async (transaction) => {
-          const point = transaction.discount * 100;
+          const point = transaction.discount * 100 || 0;
           await prisma.reward.update({
             where: { userId: transaction.userId },
             data: { point: { increment: point } },

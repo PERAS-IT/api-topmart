@@ -19,9 +19,9 @@ module.exports.createTransaction = async (data) =>
 module.exports.updateTransaction = async (data, id) =>
   await prisma.transaction.update({ where: { id }, data });
 // หา status ที่หมดเวลา
-module.exports.findExpireTransaction = async (threeday) =>
+module.exports.findExpireTransaction = async (fifteenMn) =>
   await prisma.transaction.findMany({
-    where: { createdAt: { lte: threeday }, status: TransactionStatus.PENDING },
+    where: { createdAt: { lt: fifteenMn }, status: TransactionStatus.PENDING },
   });
 // ยกเลิก transaction
 module.exports.cancelTransaction = async (id) =>

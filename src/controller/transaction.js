@@ -12,13 +12,13 @@ const {
 } = require("../service/transaction/complete-transaction");
 const { sendEmail } = require("../utils/send-mail");
 const stripe = require("../utils/stripe");
+const { changeDomain } = require("../utils/change-domain-mail");
 
 // USER CREATE TRANSACTION
 module.exports.createTransaction = async (req, res, next) => {
   try {
     // FIND transaction
     const cartItemId = req.body.cartItemId;
-    console.log(cartItemId);
     delete req.body.cartItemId;
     const cartItemActive = await repo.cart.getCartItemByCartItemId(cartItemId);
     if (cartItemId.length != cartItemActive.length)
@@ -89,7 +89,6 @@ module.exports.updateTransaction = async (req, res, next) => {
       throw new CustomError("transaction not found", "WRONG_INPUT", 400);
     if (req.body.status === TransactionStatus.FAIL) {
       // STATUS fail
-      console.log("Fail");
       const point = transaction.discount * 100;
       const { newTransactionStatus } = await canCelTransaction(
         req.transactionId,
@@ -99,19 +98,23 @@ module.exports.updateTransaction = async (req, res, next) => {
       return res.status(200).json({ newTransactionStatus });
     } else if (req.body.status === TransactionStatus.COMPLETE) {
       // STATUS complete
-      console.log("Complete");
       const point = Math.round(transaction.totalAmount / 10);
       const newTransactionStatus = await completeTransaction(
         req.transactionId,
         point,
         transaction.userId
       );
-      sendEmail(
-        "jkurathong@gmail.com",
-        "ORDER COMPLETE",
-        "your payment was success"
-      );
-      return res.status(200).json({ newTransactionStatus });
+      const user = await repo.user.getOneById(newTransactionStatus.userId);
+      const setDomain = changeDomain(user.email);
+      const paymentDetail = `payment detail has been send to ${setDomain}`;
+      const text = `Your payment has been successful with a total amount of ${
+        +newTransactionStatus.totalAmount - +newTransactionStatus.discount
+      } Baht. You have earn ${
+        +newTransactionStatus.totalAmount / 10
+      } loyalty points. 
+      If you have any questions or concerns regarding the purchase of our products or services, please contact our customer service. Thank you.`;
+      sendEmail("jkurathong@gmail.com", "ORDER COMPLETE", text);
+      return res.status(200).json({ newTransactionStatus, paymentDetail });
     } else throw new CustomError("invalid status", "WRONG_INPUT", 400);
   } catch (err) {
     next(err);

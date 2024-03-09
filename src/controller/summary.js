@@ -38,7 +38,7 @@ module.exports.getSummary = async (req, res, next) => {
     const totalSaleBySerieInThirtyDay = {
       serieId: totalSaleBySerie.map((item) => item.serieId),
       serieName: totalSaleBySerie.map((item) => item.serieName),
-      totalSales: totalSaleBySerie.map((item) => item.totalSales),
+      totalSales: totalSaleBySerie.map((item) => +item.totalSales),
     };
 
     const totalSaleByProduct =
@@ -48,7 +48,7 @@ module.exports.getSummary = async (req, res, next) => {
     const totalSaleByNameInThirtyDay = {
       productId: totalSaleByProduct.map((item) => item.productId),
       productName: totalSaleByProduct.map((item) => item.productName),
-      totalSales: totalSaleByProduct.map((item) => item.totalSales),
+      totalSales: totalSaleByProduct.map((item) => +item.totalSales),
     };
 
     res.status(200).json({

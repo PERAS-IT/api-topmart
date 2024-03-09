@@ -3,11 +3,10 @@ const { manageExpireTransaction } = require("./transaction/manage-expire-tran");
 
 exports.expireTransaction = async () => {
   try {
-    const threeDayAgo = new Date();
-    threeDayAgo.setDate(threeDayAgo.getDate() - 3);
-    threeDayAgo.setHours(0, 0, 0, 0);
+    const fifteenMinutesAgo = new Date();
+    fifteenMinutesAgo.setMinutes(fifteenMinutesAgo.getMinutes() - 15);
     const expireTransaction = await repo.transaction.findExpireTransaction(
-      threeDayAgo
+      fifteenMinutesAgo
     );
     console.log(expireTransaction);
     if (expireTransaction.length === 0) return;
