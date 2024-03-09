@@ -12,8 +12,7 @@ dotenv.config({ path: "./.env" });
 //*************API WEB */
 const host = process.env.HOST || "localhost";
 const port = process.env.PORT || 8080;
-const app = express();
-const server = http.createServer(app);
+const { app, server } = require("./service/socket/socket");
 
 //=====================================================Main Functions
 
