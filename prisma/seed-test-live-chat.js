@@ -8,14 +8,19 @@ async function seedingLive() {
   console.log(rawData);
   const data = JSON.parse(rawData);
 
+  const hour = "test";
+  const minute = "test";
   for (const item of data) {
-    await prisma.productGroup.create({
+    await new Promise((resolve) => {
+      setTimeout(resolve, 5000); // 5000 milliseconds = 5 seconds
+    });
+    await prisma.liveChat.create({
       data: {
         message: item.message,
         userId: item.userId,
         userName: item.userName,
-        hour: new Date(Date.now()).getHours,
-        minute: new Date(Date.now()).getMinutes,
+        hour: hour,
+        minute: minute,
         role: item.role,
       },
     });

@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
 
   // join room by user and admin room == userId
   socket.on("join_room", async (room) => {
-    socket.join(room);
+    socket.join(room); //user id
     console.log(room);
     console.log(`User with with ID : ${socket.id} joined room: ${room} `);
   });
