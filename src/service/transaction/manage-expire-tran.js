@@ -29,7 +29,10 @@ const manageExpireTransaction = async (expireTransaction) => {
             data.map(async (product) =>
               prisma.products.update({
                 where: { id: product.productId },
-                data: { stockQuantity: { increment: product.quantity } },
+                data: {
+                  stockQuantity: { increment: product.quantity },
+                  isSoldOut: false,
+                },
               })
             )
           );

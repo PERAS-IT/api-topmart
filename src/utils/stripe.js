@@ -10,7 +10,7 @@ module.exports.payment = async (line_items, id) => {
     line_items,
     mode: "payment",
     success_url: `${YOUR_DOMAIN}?success=true?id=${id}`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true?id=${id}`,
+    cancel_url: `${YOUR_DOMAIN}?success=false?id=${id}`,
   });
   console.log(session);
   return session.url;

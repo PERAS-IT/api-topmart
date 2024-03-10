@@ -53,13 +53,12 @@ module.exports.createTransaction = async (req, res, next) => {
       throw new CustomError("totalAmount not match", "WRONG_INPUT", 400);
     for (item of itemPayment) {
       const product = await repo.product.getProductById(item.productId);
-      console.log(product);
       line_item.push({
         price_data: {
           currency: "thb",
           product_data: {
             name: product.productName,
-            description: product.customDetail || "No detail",
+            description: product.customDetail || "Design by TopMart",
             images: [product?.productCover[0]?.cover],
           },
           unit_amount_decimal: +product.price * 100,
@@ -67,7 +66,6 @@ module.exports.createTransaction = async (req, res, next) => {
         quantity: +item.quantity,
       });
     }
-    console.log("**********************", line_item);
     if (discount == 0 && newTransaction.discount == 0) {
       const url = await stripe.payment(line_item, newTransaction.billNumber);
       return res.status(200).json({ url });
@@ -77,7 +75,7 @@ module.exports.createTransaction = async (req, res, next) => {
       discount * 100,
       newTransaction.billNumber
     );
-    res.status(200).json({ url });
+    res.status(201).json({ url });
     // res.status(201).json({ transaction: newTransaction, itemPayment });
   } catch (err) {
     next(err);
@@ -97,7 +95,7 @@ module.exports.updateTransaction = async (req, res, next) => {
       // STATUS fail
       const point = transaction.discount * 100;
       const { newTransactionStatus } = await canCelTransaction(
-        req.transactionId,
+        transaction.id,
         point,
         transaction.userId
       );
@@ -106,7 +104,7 @@ module.exports.updateTransaction = async (req, res, next) => {
       // STATUS complete
       const point = Math.round(transaction.totalAmount / 10);
       const newTransactionStatus = await completeTransaction(
-        req.transactionId,
+        transaction.id,
         point,
         transaction.userId
       );
@@ -115,9 +113,9 @@ module.exports.updateTransaction = async (req, res, next) => {
       const paymentDetail = `payment detail has been send to ${setDomain}`;
       const text = `Your payment has been successful with a total amount of ${
         +newTransactionStatus.totalAmount - +newTransactionStatus.discount
-      } Baht. You have earn ${
+      } Baht. You have earn ${Math.round(
         +newTransactionStatus.totalAmount / 10
-      } loyalty points. 
+      )} loyalty points. 
       If you have any questions or concerns regarding the purchase of our products or services, please contact our customer service. Thank you.`;
       sendEmail("jkurathong@gmail.com", "ORDER COMPLETE", text);
       return res.status(200).json({ newTransactionStatus, paymentDetail });

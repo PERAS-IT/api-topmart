@@ -16,10 +16,9 @@ transactionRoute.post(
 );
 // update transaction user
 transactionRoute.patch(
-  "/:transactionId",
+  "/",
   authenticate,
   checkPermission(Role.USER),
-  v.transactionId.validateTransactionId,
   c.transaction.updateTransaction
 );
 // user see transaction
