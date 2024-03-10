@@ -319,6 +319,7 @@ module.exports.deleteImage = async (req, res, next) => {
     next(err);
   }
 };
+// ADD IMAGE BY USER ID
 module.exports.addImage = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -338,6 +339,7 @@ module.exports.addImage = async (req, res, next) => {
     fs.unlink(req.file.path);
   }
 };
+// UPDATE IMAGE BY IMAGE ID
 module.exports.updateImage = async (req, res, next) => {
   try {
     if (!req.file) {

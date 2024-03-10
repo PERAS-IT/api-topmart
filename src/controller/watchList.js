@@ -33,7 +33,6 @@ module.exports.createWatchList = async (req, res, next) => {
 
 // DELETE  WATCH LIST
 module.exports.deleteWatchList = async (req, res, next) => {
-  console.log("this");
   try {
     const watchListId = +req.params.watchListId;
     await repo.watchList.deleteWatchList(watchListId);
