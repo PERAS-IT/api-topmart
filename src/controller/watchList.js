@@ -23,8 +23,8 @@ module.exports.createWatchList = async (req, res, next) => {
     if (searchCheck) {
       throw new CustomError("Has been have watch List", "WRONG_INPUT", 400);
     }
-    await repo.watchList.createWatchList(userId, productId);
-    res.status(200).json({ message: "create watch list success" });
+    const result = await repo.watchList.createWatchList(userId, productId);
+    res.status(200).json({ result });
   } catch (err) {
     console.log(err);
     next(err);
