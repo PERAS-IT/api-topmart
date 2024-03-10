@@ -99,8 +99,8 @@ model LiveChat {
   role      Role
   userName  String   @map("user_name")
   message   String
-  minute    String
-  hour      String
+  time      String
+  date      String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
 
   @@map("live_chats")
