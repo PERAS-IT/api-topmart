@@ -45,19 +45,46 @@ module.exports.getTransactionPenddingbyTransactionId = async (id) =>
 // ดู transaction ทั้งหมด
 module.exports.getAllTransaction = async () =>
   await prisma.transaction.findMany({
-    include: { user: { select: { email: true } } },
+    include: {
+      user: { select: { email: true } },
+      itemPayments: {
+        include: {
+          products: {
+            select: { productCover: true, productName: true, brand: true },
+          },
+        },
+      },
+    },
   });
 // ดู​ transaction fail ทั้งหมด
 module.exports.getAllFailTransaction = async () =>
   await prisma.transaction.findMany({
     where: { status: TransactionStatus.FAIL },
-    include: { user: { select: { email: true } } },
+    include: {
+      user: { select: { email: true } },
+      itemPayments: {
+        include: {
+          products: {
+            select: { productCover: true, productName: true, brand: true },
+          },
+        },
+      },
+    },
   });
 // ดู transaction complete ทั้งหมด
 module.exports.getAllCompleteTransaction = async () =>
   await prisma.transaction.findMany({
     where: { status: TransactionStatus.COMPLETE },
-    include: { user: { select: { email: true } } },
+    include: {
+      user: { select: { email: true } },
+      itemPayments: {
+        include: {
+          products: {
+            select: { productCover: true, productName: true, brand: true },
+          },
+        },
+      },
+    },
   });
 // ลบ  transaction
 module.exports.deleteTransaction = async (id) =>
