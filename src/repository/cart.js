@@ -22,6 +22,7 @@ module.exports.getAllItemIncartByCartId = async (cartId) =>
           productName: true,
           price: true,
           brand: true,
+          stockQuantity: true,
         },
       },
     },
