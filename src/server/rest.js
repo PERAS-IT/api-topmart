@@ -59,7 +59,7 @@ module.exports = function restApiServer(app) {
 
   scheduleDatabaseUpdate("*/15 * * * *", expireTransaction);
   scheduleDatabaseUpdate("0 0 * * * * ", updateTagProduct);
-  // scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
+  scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
   //=====================================================Throwing Zone
   app.use(notFound);
   app.use(errorMiddlewares);
