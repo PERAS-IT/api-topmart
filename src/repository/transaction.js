@@ -12,7 +12,11 @@ module.exports.getAllTransactionByUserId = async (userId) =>
     where: { userId },
     include: {
       itemPayments: {
-        include: { products: { select: { productCover: true } } },
+        include: {
+          products: {
+            select: { productCover: true, productName: true, brand: true },
+          },
+        },
       },
     },
   });
