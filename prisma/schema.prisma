@@ -94,8 +94,8 @@ enum Gender {
 
 model LiveChat {
   id        Int      @id @default(autoincrement())
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map("user_id")
   role      Role
   userName  String   @map("user_name")
   message   String

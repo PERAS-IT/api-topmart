@@ -12,10 +12,10 @@ liveChatRoute.get(
   c.liveChat.getMessage
 );
 liveChatRoute.get(
-  "/getAdmin/:userId",
+  "/get-chat-admin/:userId",
   authenticate,
   checkPermission(Role.ADMIN, Role.SUPERADMIN),
   c.liveChat.getMessageForAdmin
 );
-liveChatRoute.get("/getUser");
+
 module.exports = liveChatRoute;

@@ -18,12 +18,17 @@ const userSocketMap = {};
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
 
-  // receiver userId from query from user
-  const userId = socket.handshake.query.userId;
-  if (userId != "undefined") userSocketMap[userId] = socket.id;
-
-  //sent event all connection clients => sent to admin
-  io.emit("getOnlineUser", Object.keys(userSocketMap));
+  const { EIO, transport, ...onlineUser } = socket.handshake.query;
+  // set online user On connect
+  if (
+    onlineUser.userId != "undefined" &&
+    onlineUser.userId != "null" &&
+    !userSocketMap.map((el) => el.userId).includes(onlineUser.userId)
+  ) {
+    userSocketMap = [...userSocketMap, onlineUser];
+  }
+  console.log(userSocketMap);
+  io.emit("getOnlineUser", userSocketMap);
 
   // join room by user and admin room == userId
   socket.on("join_room", async (room) => {
@@ -38,7 +43,7 @@ io.on("connection", (socket) => {
     try {
       //SAVE MESSAGE TO DATA BASE
       const resultMassage = await repo.liveChat.saveMessageChat(data);
-      await socket.to(data.room).emit("receive_message", resultMassage);
+      await socket.to(data.userId).emit("receive_message", resultMassage);
     } catch (error) {
       console.log(error);
     }
