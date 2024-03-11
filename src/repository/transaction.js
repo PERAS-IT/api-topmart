@@ -55,6 +55,7 @@ module.exports.getAllTransaction = async () =>
         },
       },
     },
+    orderBy: { createdAt: "desc" },
   });
 // ดู​ transaction fail ทั้งหมด
 module.exports.getAllFailTransaction = async () =>
@@ -70,6 +71,7 @@ module.exports.getAllFailTransaction = async () =>
         },
       },
     },
+    orderBy: { createdAt: "desc" },
   });
 // ดู transaction complete ทั้งหมด
 module.exports.getAllCompleteTransaction = async () =>
@@ -85,6 +87,7 @@ module.exports.getAllCompleteTransaction = async () =>
         },
       },
     },
+    orderBy: { createdAt: "desc" },
   });
 // ลบ  transaction
 module.exports.deleteTransaction = async (id) =>
