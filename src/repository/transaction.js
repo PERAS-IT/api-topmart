@@ -10,7 +10,11 @@ module.exports.getTransactionPendingByUserId = async (userId) =>
 module.exports.getAllTransactionByUserId = async (userId) =>
   await prisma.transaction.findMany({
     where: { userId },
-    include: { itemPayments: true },
+    include: {
+      itemPayments: {
+        include: { products: { select: { productCover: true } } },
+      },
+    },
   });
 // สร้าง transaction
 module.exports.createTransaction = async (data) =>
