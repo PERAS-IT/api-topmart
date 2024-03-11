@@ -10,7 +10,15 @@ module.exports.getTransactionPendingByUserId = async (userId) =>
 module.exports.getAllTransactionByUserId = async (userId) =>
   await prisma.transaction.findMany({
     where: { userId },
-    include: { itemPayments: true },
+    include: {
+      itemPayments: {
+        include: {
+          products: {
+            select: { productCover: true, productName: true, brand: true },
+          },
+        },
+      },
+    },
   });
 // สร้าง transaction
 module.exports.createTransaction = async (data) =>
@@ -32,24 +40,54 @@ module.exports.cancelTransaction = async (id) =>
 // ดู transaction pending by transactionId
 module.exports.getTransactionPenddingbyTransactionId = async (id) =>
   await prisma.transaction.findFirst({
-    where: { id, status: TransactionStatus.PENDING },
+    where: { billNumber: id, status: TransactionStatus.PENDING },
   });
 // ดู transaction ทั้งหมด
 module.exports.getAllTransaction = async () =>
   await prisma.transaction.findMany({
-    include: { user: { select: { email: true } } },
+    include: {
+      user: { select: { email: true } },
+      itemPayments: {
+        include: {
+          products: {
+            select: { productCover: true, productName: true, brand: true },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
   });
 // ดู​ transaction fail ทั้งหมด
 module.exports.getAllFailTransaction = async () =>
   await prisma.transaction.findMany({
     where: { status: TransactionStatus.FAIL },
-    include: { user: { select: { email: true } } },
+    include: {
+      user: { select: { email: true } },
+      itemPayments: {
+        include: {
+          products: {
+            select: { productCover: true, productName: true, brand: true },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
   });
 // ดู transaction complete ทั้งหมด
 module.exports.getAllCompleteTransaction = async () =>
   await prisma.transaction.findMany({
     where: { status: TransactionStatus.COMPLETE },
-    include: { user: { select: { email: true } } },
+    include: {
+      user: { select: { email: true } },
+      itemPayments: {
+        include: {
+          products: {
+            select: { productCover: true, productName: true, brand: true },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
   });
 // ลบ  transaction
 module.exports.deleteTransaction = async (id) =>

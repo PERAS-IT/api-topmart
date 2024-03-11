@@ -10,8 +10,8 @@ FROM
         JOIN
     products p ON i.product_id = p.id
 WHERE
-    t.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-        OR t.created_at <= CURDATE() AND t.status = "COMPLETE"
+    t.paymented_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        OR t.paymented_at <= CURDATE() AND t.status = "COMPLETE"
 GROUP BY p.product_name
 order by totalSales desc
 limit 20;`;

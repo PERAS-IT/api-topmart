@@ -58,10 +58,10 @@ module.exports.createTransaction = async (req, res, next) => {
           currency: "thb",
           product_data: {
             name: product.productName,
-            description: product.customDetail || "No detail",
+            description: product.customDetail || "Design by TopMart",
             images: [product?.productCover[0]?.cover],
           },
-          unit_amount_decimal: +product.price,
+          unit_amount_decimal: +product.price * 100,
         },
         quantity: +item.quantity,
       });
@@ -75,7 +75,7 @@ module.exports.createTransaction = async (req, res, next) => {
       discount * 100,
       newTransaction.billNumber
     );
-    res.status(200).json({ url });
+    res.status(201).json({ url });
     // res.status(201).json({ transaction: newTransaction, itemPayment });
   } catch (err) {
     next(err);
@@ -88,25 +88,25 @@ module.exports.updateTransaction = async (req, res, next) => {
   try {
     // FIND transaction
     const transaction =
-      await repo.transaction.getTransactionPenddingbyTransactionId(
-        req.transactionId
-      );
+      await repo.transaction.getTransactionPenddingbyTransactionId(req.body.id);
     if (!transaction)
       throw new CustomError("transaction not found", "WRONG_INPUT", 400);
     if (req.body.status === TransactionStatus.FAIL) {
       // STATUS fail
       const point = transaction.discount * 100;
       const { newTransactionStatus } = await canCelTransaction(
-        req.transactionId,
+        transaction.id,
         point,
         transaction.userId
       );
       return res.status(200).json({ newTransactionStatus });
     } else if (req.body.status === TransactionStatus.COMPLETE) {
       // STATUS complete
-      const point = Math.round(transaction.totalAmount / 10);
+      const point = Math.floor(
+        (transaction.totalAmount - transaction.discount) / 10
+      );
       const newTransactionStatus = await completeTransaction(
-        req.transactionId,
+        transaction.id,
         point,
         transaction.userId
       );
@@ -115,9 +115,10 @@ module.exports.updateTransaction = async (req, res, next) => {
       const paymentDetail = `payment detail has been send to ${setDomain}`;
       const text = `Your payment has been successful with a total amount of ${
         +newTransactionStatus.totalAmount - +newTransactionStatus.discount
-      } Baht. You have earn ${
-        +newTransactionStatus.totalAmount / 10
-      } loyalty points. 
+      } Baht. You have earn ${Math.floor(
+        (+newTransactionStatus.totalAmount - +newTransactionStatus.discount) /
+          10
+      )} loyalty points. 
       If you have any questions or concerns regarding the purchase of our products or services, please contact our customer service. Thank you.`;
       sendEmail("jkurathong@gmail.com", "ORDER COMPLETE", text);
       return res.status(200).json({ newTransactionStatus, paymentDetail });

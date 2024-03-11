@@ -57,9 +57,9 @@ module.exports = function restApiServer(app) {
   app.use("/show-product", getProductRoute);
   app.use("/live-chat", liveChatRoute);
 
-  // scheduleDatabaseUpdate("*/15 * * * *", expireTransaction);
-  // scheduleDatabaseUpdate("0 0 * * * * *", updateTagProduct);
-  scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
+  scheduleDatabaseUpdate("*/15 * * * *", expireTransaction);
+  scheduleDatabaseUpdate("0 0 * * * * ", updateTagProduct);
+  // scheduleDatabaseUpdate("0 0 * * * *", updateStatusProduct);
   //=====================================================Throwing Zone
   app.use(notFound);
   app.use(errorMiddlewares);
