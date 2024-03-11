@@ -10,14 +10,12 @@ module.exports.payment = async (line_items, id) => {
     line_items,
     mode: "payment",
     success_url: `${YOUR_DOMAIN}?success=true?id=${id}`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true?id=${id}`,
+    cancel_url: `${YOUR_DOMAIN}?success=false?id=${id}`,
   });
-  console.log(session);
   return session.url;
 };
 
 module.exports.paymentWithDiscount = async (line_items, amount_off, id) => {
-  console.log(typeof amount_off);
   coupon = await stripe.coupons.create({
     currency: "thb",
     amount_off,
@@ -32,7 +30,7 @@ module.exports.paymentWithDiscount = async (line_items, amount_off, id) => {
     ],
     mode: "payment",
     success_url: `${YOUR_DOMAIN}?success=true?id=${id}`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true?id=${id}`,
+    cancel_url: `${YOUR_DOMAIN}?success=false?id=${id}`,
   });
   return session.url;
 };
