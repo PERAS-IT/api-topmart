@@ -1,0 +1,44 @@
+[
+    {
+        "userId": 6,
+        "role": "USER",
+        "userName": "user3",
+        "message": "Hello I need support"
+    },
+    {
+        "userId": 6,
+        "role": "SUPERADMIN",
+        "userName": "topmart",
+        "message": "Good morning/afternoon, and welcome to Top mart ! , and I’m here to assist you. What can I help you with today?"
+    },
+    {
+        "userId": 6,
+        "role": "USER",
+        "userName": "user3",
+        "message": "I have a question about series Molly"
+    },
+    {
+        "userId": 6,
+        "role": "USER",
+        "userName": "user3",
+        "message": "How many your item in series Molly"
+    },
+    {
+        "userId": 6,
+        "role": "SUPERADMIN",
+        "userName": "topmart",
+        "message": "We have 50 item in series Molly"
+    },
+    {
+        "userId": 6,
+        "role": "USER",
+        "userName": "user3",
+        "message": "I wanna purchase big lot, Can you support me"
+    },
+    {
+        "userId": 6,
+        "role": "SUPERADMIN",
+        "userName": "topmart",
+        "message": "I appreciate for that. you can contact customer sale support On phone number ......... we can provide special price for you"
+    }
+]

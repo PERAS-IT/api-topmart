@@ -3,7 +3,7 @@ const prisma = require("../config/prisma");
 module.exports.getAllLanding = async () =>
   await prisma.landingImage.findMany({
     include: {
-      Products: {
+      products: {
         include: {
           productCover: true,
         },
