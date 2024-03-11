@@ -10,6 +10,9 @@ module.exports.updateCart = async (req, res, next) => {
     );
     if (!haveProduct || haveProduct.isActive === false)
       throw new CustomError("product not available now", "WRONG_INPUT", 400);
+    if (haveProduct.stockQuantity < req.body.quantity) {
+      throw new CustomError("product is up to limit", "WRONG_INPUT", 400);
+    }
     // FIND cart
     const cart = await repo.cart.getCartbyUserId(req.user.id);
     // IF no cart create cart then create cartItem
