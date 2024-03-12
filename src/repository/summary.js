@@ -4,9 +4,10 @@ const prisma = require("../config/prisma");
 module.exports.getThirtyDayTran = async (thirty, tomorrow) =>
   await prisma.transaction.findMany({
     where: {
-      createdAt: { gte: thirty, lte: tomorrow },
+      paymentedAt: { gte: thirty, lte: tomorrow },
       status: TransactionStatus.COMPLETE,
     },
+    orderBy: { paymentedAt: "asc" },
   });
 
 module.exports.getTotalSaleBySerieInThirtyDay = async () => {
