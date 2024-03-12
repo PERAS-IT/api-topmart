@@ -13,7 +13,7 @@ const io = new Server(server, {
   },
 });
 
-const userSocketMap = {};
+let userSocketMap = [];
 
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
