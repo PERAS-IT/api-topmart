@@ -118,7 +118,7 @@ module.exports.getProductById = async (idProduct) =>
   });
 
 module.exports.deleteProductSoft = async (id) =>
-  await prisma.products.update({ where: id, data: { isActive: false } });
+  await prisma.products.update({ where: { id }, data: { isActive: false } });
 
 module.exports.deleteProduct = async (id) =>
   await prisma.products.delete({ where: { id } });
