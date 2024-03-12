@@ -15,7 +15,7 @@ module.exports.getSummary = async (req, res, next) => {
     console.log(transactionInthirtyDay);
     const summary = {};
     for (transaction of transactionInthirtyDay) {
-      const date = transaction.createdAt.toISOString().split("T")[0];
+      const date = transaction.paymentedAt.toISOString().split("T")[0];
       if (!summary[date]) {
         summary[date] = { totalSale: 0 };
         summary[date].totalSale += +transaction.totalAmount;
@@ -34,7 +34,7 @@ module.exports.getSummary = async (req, res, next) => {
     const totalSaleBySerie =
       await repo.summary.getTotalSaleBySerieInThirtyDay();
 
-    console.log(totalSaleBySerie);
+    // console.log(totalSaleBySerie);
     const totalSaleBySerieInThirtyDay = {
       serieId: totalSaleBySerie.map((item) => item.serieId),
       serieName: totalSaleBySerie.map((item) => item.serieName),
@@ -44,7 +44,7 @@ module.exports.getSummary = async (req, res, next) => {
     const totalSaleByProduct =
       await repo.summary.getTotalSaleByProductNameInThirtyDay();
 
-    console.log(totalSaleByProduct);
+    // console.log(totalSaleByProduct);
     const totalSaleByNameInThirtyDay = {
       productId: totalSaleByProduct.map((item) => item.productId),
       productName: totalSaleByProduct.map((item) => item.productName),

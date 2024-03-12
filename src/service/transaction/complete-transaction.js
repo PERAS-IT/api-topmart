@@ -1,13 +1,16 @@
 const { TransactionStatus, PaymentStatus } = require("@prisma/client");
 const prisma = require("../../config/prisma");
 
+const date = new Date();
+// date.setDate(date.getDate() - 3);
+
 const completeTransaction = async (id, point, userId) => {
   try {
     const result = await prisma.$transaction(async (prisma) => {
       // UPDATE transaction status to complete
       const newTransactionStatus = await prisma.transaction.update({
         where: { id },
-        data: { status: TransactionStatus.COMPLETE, paymentedAt: new Date() },
+        data: { status: TransactionStatus.COMPLETE, paymentedAt: date },
       });
       // UPDATE ItemPayment to complete
       await prisma.itemPayment.updateMany({
