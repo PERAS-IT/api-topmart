@@ -17,7 +17,7 @@ async function sendEmail(to, subject, text) {
       from: process.env.USER_MAIL,
       to: to,
       subject: subject,
-      text: text,
+      html: text,
     };
     await transporter.sendMail(mailOptions);
     console.log("Email sent successfully");
